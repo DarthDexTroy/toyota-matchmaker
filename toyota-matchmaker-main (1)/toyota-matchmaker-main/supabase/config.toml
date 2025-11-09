@@ -1,0 +1,7 @@
+project_id = "xjjjfdscvjlrmxblmzst"
+
+[functions.toyota-chatbot]
+verify_jwt = false
+
+[functions.ai-match-scorer]
+verify_jwt = false
