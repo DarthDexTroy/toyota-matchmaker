@@ -63,6 +63,31 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
     }
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (currentIndex >= vehicles.length) return;
+    setDragging(true);
+    setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!dragging) return;
+    const deltaX = e.touches[0].clientX - startPos.x;
+    const deltaY = e.touches[0].clientY - startPos.y;
+    setOffset({ x: deltaX, y: deltaY });
+  };
+
+  const handleTouchEnd = () => {
+    if (!dragging) return;
+    setDragging(false);
+
+    const threshold = 100;
+    if (Math.abs(offset.x) > threshold) {
+      handleSwipe(offset.x > 0 ? "right" : "left");
+    } else {
+      setOffset({ x: 0, y: 0 });
+    }
+  };
+
   const getCardStyle = (index: number) => {
     const isActive = index === currentIndex;
     const diff = index - currentIndex;
@@ -106,6 +131,9 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {vehicles.map((vehicle, index) => (
           <VehicleCard
