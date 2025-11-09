@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { SwipeDeck } from "@/components/SwipeDeck";
 import { Button } from "@/components/ui/button";
-import { Heart, BarChart3, Settings, XCircle } from "lucide-react";
+import { Heart, BarChart3, Settings, X } from "lucide-react";
 import { SwipeSession, UserPreferences, Vehicle } from "@/types/vehicle";
 import { PreferencesModal } from "@/components/PreferencesModal";
 import { useNavigate } from "react-router-dom";
@@ -97,32 +97,43 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
         initialPrefs={preferences}
       />
       
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
         {/* Header */}
-        <header className="border-b border-border bg-card/50 backdrop-blur-sm">
+        <header className="border-b border-border bg-gradient-to-r from-primary via-primary/90 to-accent backdrop-blur-sm">
           <div className="container mx-auto flex items-center justify-between px-4 py-4">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <span className="text-xl font-bold text-primary-foreground">T</span>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 items-center justify-center rounded-lg bg-primary-foreground/20 px-3 border-2 border-primary-foreground/40">
+                <span className="text-lg font-black text-primary-foreground tracking-wider">TOYOTA</span>
               </div>
-              <h1 className="text-2xl font-bold text-foreground">
+              <h1 className="text-2xl font-bold text-primary-foreground">
                 MatchMyToyota
               </h1>
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" size="icon" onClick={handleEditPreferences}>
-                <Settings className="h-5 w-5" />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={() => navigate("/passes")}
+                className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30"
+              >
+                <X className="h-5 w-5" />
               </Button>
-              <Button variant="outline" size="icon" onClick={() => navigate("/passes")}>
-                <XCircle className="h-5 w-5" />
-              </Button>
-              <Button variant="outline" className="gap-2" onClick={() => navigate("/favorites")}>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={() => navigate("/favorites")}
+                className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30"
+              >
                 <Heart className="h-5 w-5" />
-                <span className="hidden sm:inline">
-                  Favorites ({session.favorites.length})
-                </span>
-                <span className="sm:hidden">{session.favorites.length}</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={handleEditPreferences}
+                className="bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground border-primary-foreground/30"
+              >
+                <Settings className="h-5 w-5" />
               </Button>
             </div>
           </div>

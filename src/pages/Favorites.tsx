@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Vehicle } from "@/types/vehicle";
 import { VehicleCard } from "@/components/VehicleCard";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface FavoritesProps {
@@ -13,16 +13,19 @@ export const Favorites = ({ vehicles, onRemove }: FavoritesProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
+      <header className="border-b border-border bg-gradient-to-r from-primary via-primary/90 to-accent backdrop-blur-sm">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="text-primary-foreground hover:bg-primary-foreground/20">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-2xl font-bold text-foreground">My Favorites</h1>
+            <div className="flex h-10 items-center justify-center rounded-lg bg-primary-foreground/20 px-3 border-2 border-primary-foreground/40">
+              <span className="text-lg font-black text-primary-foreground tracking-wider">TOYOTA</span>
+            </div>
+            <h1 className="text-2xl font-bold text-primary-foreground">My Favorites</h1>
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-primary-foreground/80">
             {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""}
           </div>
         </div>
@@ -50,14 +53,24 @@ export const Favorites = ({ vehicles, onRemove }: FavoritesProps) => {
                 <div className="relative h-[500px]">
                   <VehicleCard vehicle={vehicle} />
                 </div>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="absolute -top-2 -right-2 z-10 h-10 w-10 rounded-full p-0 shadow-lg"
-                  onClick={() => onRemove(vehicle.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <div className="absolute -top-2 -right-2 z-10 flex gap-2">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="h-10 w-10 rounded-full p-0 shadow-lg bg-accent hover:bg-accent/90"
+                    onClick={() => navigate(`/vehicle/${vehicle.id}`)}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="h-10 w-10 rounded-full p-0 shadow-lg"
+                    onClick={() => onRemove(vehicle.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

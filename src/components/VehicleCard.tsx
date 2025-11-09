@@ -1,6 +1,6 @@
 import { Vehicle } from "@/types/vehicle";
-import { MatchScoreBadge } from "./MatchScoreBadge";
-import { MapPin, Gauge, Droplet } from "lucide-react";
+import { CircularMatchScore } from "./CircularMatchScore";
+import { Gauge, Droplet } from "lucide-react";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -22,7 +22,9 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
           draggable={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-        <MatchScoreBadge score={vehicle.match_score} />
+        <div className="absolute top-4 right-4">
+          <CircularMatchScore score={vehicle.match_score} size="md" />
+        </div>
       </div>
 
       {/* Content Section */}
@@ -34,15 +36,9 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
           <p className="text-lg text-muted-foreground">{vehicle.subtitle}</p>
         </div>
 
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4">
           <div className="text-3xl font-bold text-primary">
             ${vehicle.price.toLocaleString()}
-          </div>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4" />
-            <span>
-              {vehicle.dealer.city}, {vehicle.dealer.state}
-            </span>
           </div>
         </div>
 
@@ -67,12 +63,12 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
           </h3>
           <div className="flex flex-wrap gap-2">
             {vehicle.key_features.map((feature, idx) => (
-              <span
+              <div
                 key={idx}
-                className="rounded-lg bg-muted px-2.5 py-1 text-xs text-muted-foreground"
+                className="rounded-lg bg-gradient-to-r from-primary/20 via-primary/10 to-accent/10 border border-primary/30 px-3 py-1.5 text-xs font-medium text-foreground"
               >
                 {feature}
-              </span>
+              </div>
             ))}
           </div>
         </div>

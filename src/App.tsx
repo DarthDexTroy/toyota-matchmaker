@@ -3,16 +3,24 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
 import Index from "./pages/Index";
 import { Favorites } from "./pages/Favorites";
 import { Passes } from "./pages/Passes";
+import { VehicleDetail } from "./pages/VehicleDetail";
 import NotFound from "./pages/NotFound";
 import { mockVehicles } from "./data/mockVehicles";
 import { SwipeSession, UserPreferences, Vehicle } from "./types/vehicle";
 import { calculateMatchScore } from "./utils/matchScoring";
 
 const queryClient = new QueryClient();
+
+// Wrapper component to handle vehicle detail route
+const VehicleDetailWrapper = ({ rankedVehicles }: { rankedVehicles: Vehicle[] }) => {
+  const { id } = useParams();
+  const vehicle = rankedVehicles.find((v) => v.id === id) || rankedVehicles[0];
+  return <VehicleDetail vehicle={vehicle} />;
+};
 
 const App = () => {
   const [preferences, setPreferences] = useState<UserPreferences | null>(null);
@@ -92,6 +100,10 @@ const App = () => {
                   onRestore={handleRestorePass}
                 />
               }
+            />
+            <Route
+              path="/vehicle/:id"
+              element={<VehicleDetailWrapper rankedVehicles={rankedVehicles} />}
             />
             <Route path="*" element={<NotFound />} />
           </Routes>

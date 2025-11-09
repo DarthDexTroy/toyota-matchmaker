@@ -1,188 +1,90 @@
 import { Vehicle } from "@/types/vehicle";
+import inventoryData from "./toyota_inventory_2025_2026.json";
 
-export const mockVehicles: Vehicle[] = [
-  {
-    id: "1",
-    title: "2024 Camry",
-    subtitle: "XSE",
-    price: 32850,
-    image_url: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=600&fit=crop",
-    mpg_or_range: "32 MPG Combined",
-    powertrain: "hybrid",
-    drivetrain: "FWD",
-    ext_color: "Wind Chill Pearl",
-    int_color: "Black SofTex",
-    key_features: ["Toyota Safety Sense 3.0", "12.3-inch Touchscreen", "Wireless Apple CarPlay"],
-    dealer: {
-      name: "Toyota of Dallas",
-      city: "Dallas",
-      state: "TX",
-      distance_miles: 5,
-    },
-    match_score: 92,
-    body_style: "sedan",
-    model: "Camry",
-    trim: "XSE",
-  },
-  {
-    id: "2",
-    title: "2024 RAV4",
-    subtitle: "XLE Premium",
-    price: 35280,
-    image_url: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop",
-    mpg_or_range: "30 MPG Combined",
-    powertrain: "hybrid",
-    drivetrain: "AWD",
-    ext_color: "Lunar Rock",
-    int_color: "Softex Gray",
-    key_features: ["Panoramic Moonroof", "Power Liftgate", "Adaptive Cruise Control"],
-    dealer: {
-      name: "Toyota of Plano",
-      city: "Plano",
-      state: "TX",
-      distance_miles: 12,
-    },
-    match_score: 88,
-    body_style: "suv",
-    model: "RAV4",
-    trim: "XLE Premium",
-  },
-  {
-    id: "3",
-    title: "2024 Highlander",
-    subtitle: "Limited",
-    price: 47820,
-    image_url: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&h=600&fit=crop",
-    mpg_or_range: "24 MPG Combined",
-    powertrain: "gas",
-    drivetrain: "AWD",
-    ext_color: "Midnight Black Metallic",
-    int_color: "Glazed Caramel Leather",
-    key_features: ["3-Row Seating", "JBL Premium Audio", "Digital Rearview Mirror"],
-    dealer: {
-      name: "Toyota of Richardson",
-      city: "Richardson",
-      state: "TX",
-      distance_miles: 8,
-    },
-    match_score: 85,
-    body_style: "suv",
-    model: "Highlander",
-    trim: "Limited",
-  },
-  {
-    id: "4",
-    title: "2024 Tacoma",
-    subtitle: "TRD Sport",
-    price: 42995,
-    image_url: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop",
-    mpg_or_range: "20 MPG Combined",
-    powertrain: "gas",
-    drivetrain: "4WD",
-    ext_color: "Army Green",
-    int_color: "Black Fabric",
-    key_features: ["Off-Road Package", "LED Headlights", "Bed Liner"],
-    dealer: {
-      name: "Toyota of Frisco",
-      city: "Frisco",
-      state: "TX",
-      distance_miles: 15,
-    },
-    match_score: 78,
-    body_style: "truck",
-    model: "Tacoma",
-    trim: "TRD Sport",
-  },
-  {
-    id: "5",
-    title: "2024 Prius",
-    subtitle: "Limited",
-    price: 37350,
-    image_url: "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=800&h=600&fit=crop",
-    mpg_or_range: "57 MPG Combined",
-    powertrain: "hybrid",
-    drivetrain: "FWD",
-    ext_color: "Supersonic Red",
-    int_color: "Black Ultrasuede",
-    key_features: ["Solar Panel Roof", "12.3-inch Display", "Premium JBL Audio"],
-    dealer: {
-      name: "Toyota of Dallas",
-      city: "Dallas",
-      state: "TX",
-      distance_miles: 5,
-    },
-    match_score: 90,
-    body_style: "hatchback",
-    model: "Prius",
-    trim: "Limited",
-  },
-  {
-    id: "6",
-    title: "2024 4Runner",
-    subtitle: "TRD Pro",
-    price: 56620,
-    image_url: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop",
-    mpg_or_range: "17 MPG Combined",
-    powertrain: "gas",
-    drivetrain: "4WD",
-    ext_color: "Solar Octane",
-    int_color: "Black Leather",
-    key_features: ["Fox Suspension", "Roof Rack", "Multi-Terrain Select"],
-    dealer: {
-      name: "Toyota of McKinney",
-      city: "McKinney",
-      state: "TX",
-      distance_miles: 20,
-    },
-    match_score: 82,
-    body_style: "suv",
-    model: "4Runner",
-    trim: "TRD Pro",
-  },
-  {
-    id: "7",
-    title: "2024 Corolla",
-    subtitle: "SE",
-    price: 24995,
-    image_url: "https://images.unsplash.com/photo-1610768764270-790fbec18178?w=800&h=600&fit=crop",
-    mpg_or_range: "36 MPG Combined",
-    powertrain: "gas",
-    drivetrain: "FWD",
-    ext_color: "Blueprint",
-    int_color: "Black Sport Fabric",
-    key_features: ["Sport Tuned Suspension", "18-inch Alloy Wheels", "Smart Key System"],
-    dealer: {
-      name: "Toyota of Allen",
-      city: "Allen",
-      state: "TX",
-      distance_miles: 18,
-    },
-    match_score: 86,
-    body_style: "sedan",
-    model: "Corolla",
-    trim: "SE",
-  },
-  {
-    id: "8",
-    title: "2024 Sienna",
-    subtitle: "XLE",
-    price: 45560,
-    image_url: "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?w=800&h=600&fit=crop",
-    mpg_or_range: "36 MPG Combined",
-    powertrain: "hybrid",
-    drivetrain: "AWD",
-    ext_color: "Celestial Silver Metallic",
-    int_color: "Ash Fabric",
-    key_features: ["Power Sliding Doors", "Rear Entertainment System", "7-Passenger Seating"],
-    dealer: {
-      name: "Toyota of Garland",
-      city: "Garland",
-      state: "TX",
-      distance_miles: 10,
-    },
-    match_score: 79,
-    body_style: "van",
-    model: "Sienna",
-    trim: "XLE",
-  },
-];
+// Generate mock vehicles from Toyota inventory JSON
+const generateVehiclesFromInventory = (): Vehicle[] => {
+  const vehicles: Vehicle[] = [];
+  
+  inventoryData.forEach((item, index) => {
+    const trims = item.trims.split(";").map((t) => t.trim());
+    const selectedTrim = trims[Math.floor(Math.random() * trims.length)];
+    
+    // Map powertrain from JSON to our types
+    let powertrain: "gas" | "hybrid" | "plug-in-hybrid" | "ev" = "gas";
+    if (item.powertrain.toLowerCase().includes("phev") || item.powertrain.toLowerCase().includes("plug-in")) {
+      powertrain = "plug-in-hybrid";
+    } else if (item.powertrain.toLowerCase().includes("bev") || item.powertrain.toLowerCase().includes("electric")) {
+      powertrain = "ev";
+    } else if (item.powertrain.toLowerCase().includes("hybrid")) {
+      powertrain = "hybrid";
+    }
+    
+    // Sample colors (these would ideally come from the color_info URL)
+    const exteriorColors = ["Blueprint", "Wind Chill Pearl", "Supersonic Red", "Midnight Black Metallic", "Lunar Rock", "Predawn Gray", "Celestial Silver"];
+    const interiorColors = ["Black Fabric", "Black SofTex", "Black Leather", "Ash Fabric", "Glazed Caramel Leather"];
+    
+    // Sample features based on body style and model
+    const getFeatures = (model: string, bodyStyle: string) => {
+      const baseFeatures = ["Toyota Safety Sense", "8-inch Touchscreen", "Apple CarPlay & Android Auto"];
+      const hybridFeatures = powertrain.includes("hybrid") ? ["Hybrid Synergy Drive", "Regenerative Braking"] : [];
+      const luxuryFeatures = selectedTrim.toLowerCase().includes("limited") || selectedTrim.toLowerCase().includes("platinum") 
+        ? ["Premium Audio System", "Leather Seats", "Heated & Ventilated Seats"]
+        : [];
+      const suvFeatures = bodyStyle.toLowerCase() === "suv" ? ["All-Terrain Capability", "Power Liftgate"] : [];
+      
+      return [...baseFeatures, ...hybridFeatures, ...luxuryFeatures, ...suvFeatures].slice(0, 5);
+    };
+    
+    // Sample images by body style
+    const getImageForBodyStyle = (bodyStyle: string) => {
+      const images: Record<string, string> = {
+        "sedan": "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=600&fit=crop",
+        "suv": "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop",
+        "truck": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop",
+        "hatchback": "https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=800&h=600&fit=crop",
+        "minivan": "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?w=800&h=600&fit=crop",
+        "coupe": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=600&fit=crop",
+        "crossover": "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop",
+      };
+      return images[bodyStyle.toLowerCase()] || images["sedan"];
+    };
+    
+    // MPG/Range based on powertrain
+    const getMpgRange = (powertrain: string) => {
+      if (powertrain === "ev") return "250 Miles Range";
+      if (powertrain === "plug-in-hybrid") return "40 Miles EV + 45 MPG";
+      if (powertrain === "hybrid") return "45 MPG Combined";
+      return "28 MPG Combined";
+    };
+    
+    // Sample drivetrains
+    const drivetrains: Array<"FWD" | "AWD" | "RWD" | "4WD"> = ["FWD", "AWD", "RWD", "4WD"];
+    const drivetrain = item.body_style.toLowerCase() === "truck" || item.body_style.toLowerCase() === "suv" 
+      ? (Math.random() > 0.5 ? "AWD" : "4WD") 
+      : (Math.random() > 0.5 ? "FWD" : "AWD");
+    
+    if (!item.base_msrp_usd) return; // Skip if no price
+    
+    vehicles.push({
+      id: `${item.model_year}-${item.model.replace(/\s+/g, "-")}-${index}`,
+      title: `${item.model_year} ${item.model}`,
+      subtitle: selectedTrim,
+      price: item.base_msrp_usd,
+      image_url: getImageForBodyStyle(item.body_style),
+      mpg_or_range: getMpgRange(powertrain),
+      powertrain,
+      drivetrain,
+      ext_color: exteriorColors[Math.floor(Math.random() * exteriorColors.length)],
+      int_color: interiorColors[Math.floor(Math.random() * interiorColors.length)],
+      key_features: getFeatures(item.model, item.body_style),
+      match_score: 85, // Default, will be recalculated
+      body_style: item.body_style.toLowerCase(),
+      model: item.model,
+      trim: selectedTrim,
+    });
+  });
+  
+  return vehicles;
+};
+
+export const mockVehicles: Vehicle[] = generateVehiclesFromInventory().filter(v => v);

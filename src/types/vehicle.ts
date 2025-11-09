@@ -10,7 +10,7 @@ export interface Vehicle {
   ext_color: string;
   int_color: string;
   key_features: string[];
-  dealer: {
+  dealer?: {
     name: string;
     city: string;
     state: string;
