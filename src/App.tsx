@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import { mockVehicles } from "./data/mockVehicles";
 import { SwipeSession, UserPreferences, Vehicle } from "./types/vehicle";
 import { calculateMatchScore } from "./utils/matchScoring";
+import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
@@ -31,16 +32,47 @@ const App = () => {
   });
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
 
-  // Recalculate match scores when preferences change
+  // Recalculate match scores when preferences change using AI
   useEffect(() => {
-    if (preferences) {
-      const scored = mockVehicles.map((v) => ({
-        ...v,
-        match_score: calculateMatchScore(v, preferences),
-      }));
-      scored.sort((a, b) => b.match_score - a.match_score);
-      setRankedVehicles(scored);
-    }
+    const scoreVehicles = async () => {
+      if (!preferences) return;
+      
+      const scoredVehicles = await Promise.all(
+        mockVehicles.map(async (vehicle) => {
+          try {
+            const { data, error } = await supabase.functions.invoke('match-scorer', {
+              body: { vehicle, preferences }
+            });
+            
+            if (error) {
+              console.error('Error scoring vehicle:', vehicle.title, error);
+              // Fallback to algorithm if AI fails
+              return {
+                ...vehicle,
+                match_score: calculateMatchScore(vehicle, preferences),
+              };
+            }
+            
+            return {
+              ...vehicle,
+              match_score: data.score,
+            };
+          } catch (err) {
+            console.error('Error scoring vehicle:', vehicle.title, err);
+            // Fallback to algorithm if AI fails
+            return {
+              ...vehicle,
+              match_score: calculateMatchScore(vehicle, preferences),
+            };
+          }
+        })
+      );
+      
+      scoredVehicles.sort((a, b) => b.match_score - a.match_score);
+      setRankedVehicles(scoredVehicles);
+    };
+    
+    scoreVehicles();
   }, [preferences]);
 
   const favoriteVehicles = rankedVehicles.filter((v) =>
