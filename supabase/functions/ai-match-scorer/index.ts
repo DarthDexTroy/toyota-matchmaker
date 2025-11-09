@@ -27,7 +27,7 @@ SCORING RULES:
   * If user liked similar vehicles: increase score
   * More swipes = stronger adjustment
 
-- Output variance: Aim for realistic distribution (most vehicles 50-85, exceptional 85-95, poor matches 20-50)
+- Output variance: BE GENEROUS with top matches. Best matches should score 88-95, good matches 75-87, average 60-74, below average 40-59, poor matches 20-39
 
 USER INPUT STRUCTURE:
 {
@@ -70,9 +70,9 @@ serve(async (req) => {
   try {
     const { vehicle, preferences, swipeHistory, allVehicles } = await req.json();
     
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not configured");
     }
 
     // Build the user prompt with all context
@@ -112,22 +112,23 @@ SWIPE HISTORY:
 
 Output only the integer match grade (0-100):`;
 
-    console.log("Calling Lovable AI for match scoring...");
+    console.log("Calling Google Gemini API for match scoring...");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: userPrompt }
-        ],
-        temperature: 0.3, // Low temperature for consistent scoring
-        max_tokens: 10,
+        contents: [{
+          parts: [{
+            text: `${SYSTEM_PROMPT}\n\n${userPrompt}`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 10,
+        }
       }),
     });
 
@@ -146,7 +147,7 @@ Output only the integer match grade (0-100):`;
     }
 
     const data = await response.json();
-    const aiResponse = data.choices?.[0]?.message?.content || "";
+    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
     
     console.log("AI raw response:", aiResponse);
 
