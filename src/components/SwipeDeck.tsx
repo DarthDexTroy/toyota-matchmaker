@@ -91,9 +91,9 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
     return {
       transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg) scale(${scale})`,
       opacity,
-      zIndex: 100 - diff, // stack within the deck
+      zIndex: 100 - diff,                   // stack within the deck
       transition: dragging ? "none" : "transform 0.25s ease, opacity 0.25s ease",
-      pointerEvents: isActive ? "auto" : "none", // only top card is interactive
+      pointerEvents: isActive ? "auto" : "none" // only top card is interactive
     } as React.CSSProperties;
   };
 
@@ -114,7 +114,7 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
       <div
         ref={deckRef}
         className="relative mx-auto h-[700px] w-full max-w-xl select-none z-10"
-        style={{ touchAction: "pan-y" }} // allow vertical page scroll when not swiping
+        style={{ touchAction: "pan-y" }}  // allow vertical page scroll when not swiping
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -125,7 +125,11 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
       >
         {/* Absolutely position each card to stack them */}
         {vehicles.map((vehicle, index) => (
-          <div key={vehicle.id} className="absolute inset-0 will-change-transform" style={getCardStyle(index)}>
+          <div
+            key={vehicle.id}
+            className="absolute inset-0 will-change-transform"
+            style={getCardStyle(index)}
+          >
             <VehicleCard vehicle={vehicle} />
           </div>
         ))}
@@ -143,7 +147,13 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
           <X className="h-8 w-8" />
         </Button>
 
-        <Button variant="outline" size="icon" className="h-12 w-12 rounded-full" onClick={onUndo} disabled={!canUndo}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-12 w-12 rounded-full"
+          onClick={onUndo}
+          disabled={!canUndo}
+        >
           <Undo2 className="h-5 w-5" />
         </Button>
 
