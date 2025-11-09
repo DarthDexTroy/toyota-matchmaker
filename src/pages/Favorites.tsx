@@ -14,54 +14,31 @@ export const Favorites = ({ vehicles, onRemove }: FavoritesProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Gentle spotlight from bottom */}
-      <div className="pointer-events-none absolute inset-0 -z-30 bg-[radial-gradient(800px_400px_at_50%_120%,rgba(255,255,255,.07),transparent_70%)]" />
-      
-      {/* Grain texture */}
-      <div 
-        className="pointer-events-none absolute inset-0 -z-20 opacity-20"
-        style={{ 
-          backgroundImage: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'140\' height=\'140\' viewBox=\'0 0 140 140\'><filter id=\'n\'><feTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'2\' stitchTiles=\'stitch\'/><feColorMatrix type=\'saturate\' values=\'0\'/><feComponentTransfer><feFuncA type=\'table\' tableValues=\'0 0 0 .05 .12\'/></feComponentTransfer></filter><rect width=\'100%\' height=\'100%\' filter=\'url(%23n)\'/></svg>")'
-        }} 
-      />
-      
+    <div className="min-h-screen bg-gradient-to-br from-muted via-muted/80 to-muted/60">
       <AppHeader title="My Favorites" />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2 text-white/70 hover:text-white hover:bg-white/5">
+        <div className="mb-6">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Swiping
           </Button>
-          
-          <div className="inline-block rounded-2xl bg-white/5 px-5 py-3 backdrop-blur-md ring-1 ring-white/10 mt-6">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-              YotaMatch
-            </span>
-          </div>
-
-          <h1 className="mt-4 text-balance text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.04] tracking-tight">
-            <span className="bg-gradient-to-b from-white via-white to-[#d9d9d9] bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(0,0,0,.35)]">
-              My Favorites
-            </span>
-          </h1>
-          
-          <p className="mt-3 text-base sm:text-lg text-white/70">
+          <h1 className="text-3xl font-bold text-foreground mt-4 mb-2">My Favorites</h1>
+          <p className="text-muted-foreground">
             {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""} saved
           </p>
         </div>
 
         {vehicles.length === 0 ? (
           <div className="flex h-[400px] items-center justify-center">
-            <div className="text-center rounded-2xl bg-white/3 ring-1 ring-white/15 backdrop-blur-sm p-8">
-              <h2 className="mb-2 text-2xl font-bold text-white">
+            <div className="text-center">
+              <h2 className="mb-2 text-2xl font-bold text-card-foreground">
                 No favorites yet
               </h2>
-              <p className="text-white/70">
+              <p className="text-muted-foreground">
                 Swipe right on vehicles you like to add them here
               </p>
-              <Button onClick={() => navigate("/")} className="mt-4 bg-[#EB0A1E] hover:bg-[#d00a1a]">
+              <Button onClick={() => navigate("/")} className="mt-4">
                 Start Swiping
               </Button>
             </div>
