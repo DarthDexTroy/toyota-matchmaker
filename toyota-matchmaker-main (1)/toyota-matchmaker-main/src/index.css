@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 96%;
+    --foreground: 0 0% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
+
+    /* Toyota red/dark red theme */
+    --primary: 0 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 0 0% 25%;
+
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 0 75% 35%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 85% 45%;
+
+    --radius: 1rem;
+
+    /* Match score colors */
+    --match-excellent: 142 76% 36%;
+    --match-good: 45 93% 47%;
+    --match-fair: 25 95% 53%;
+    --match-poor: 0 84% 60%;
+
+    /* Red/Gray gradients */
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 96%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 45%) 0%, hsl(0 75% 35%) 100%);
+
+    /* Shadows */
+    --shadow-card: 0 10px 40px -10px hsl(0 0% 0% / 0.12);
+    --shadow-card-hover: 0 20px 50px -15px hsl(0 0% 0% / 0.2);
+    --shadow-primary: 0 10px 30px -5px hsl(0 85% 45% / 0.3);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 20%;
+    --sidebar-primary: 0 85% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 0 85% 50%;
+  }
+
+  .dark {
+    --background: 0 0% 12%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 0 85% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 85%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 55%;
+
+    --accent: 0 75% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 0 0% 22%;
+    --input: 0 0% 22%;
+    --ring: 0 85% 50%;
+
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 15%) 0%, hsl(0 0% 12%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 50%) 0%, hsl(0 75% 40%) 100%);
+
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 0 100% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 100% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground;
+    background: #0b0b0c;
+  }
+  
+  /* Layered Toyota gradient background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -50;
+    pointer-events: none;
+    background: 
+      radial-gradient(1200px 600px at 0% 0%, rgba(235, 10, 30, 0.35), transparent 60%),
+      radial-gradient(900px 450px at 100% 0%, rgba(165, 0, 0, 0.25), transparent 60%),
+      linear-gradient(180deg, #1a0000 0%, #0b0b0c 30%, #0b0b0c 100%);
+  }
+  
+  /* Subtle grid overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -40;
+    pointer-events: none;
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+    background: 
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 72px),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 72px);
+  }
+}
