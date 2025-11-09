@@ -34,28 +34,26 @@ export const Passes = ({ vehicles, onRestore }: PassesProps) => {
             variant="ghost" 
             size="sm" 
             onClick={() => navigate("/")} 
-            className="gap-2 text-white/70 hover:text-white hover:bg-white/10"
+            className="gap-2 text-muted-foreground hover:text-foreground hover:bg-accent"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Swiping
           </Button>
-          <h1 className="mt-4 mb-2 text-4xl font-black leading-tight tracking-tight">
-            <span className="bg-gradient-to-b from-white via-white to-[#d9d9d9] bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(0,0,0,.35)]">
-              Passed Vehicles
-            </span>
+          <h1 className="mt-4 mb-2 text-4xl font-black leading-tight tracking-tight text-foreground">
+            Passed Vehicles
           </h1>
-          <p className="text-white/70">
+          <p className="text-muted-foreground">
             {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""} passed
           </p>
         </div>
 
         {vehicles.length === 0 ? (
           <div className="flex h-[400px] items-center justify-center">
-            <div className="rounded-2xl bg-white/3 ring-1 ring-white/15 backdrop-blur-sm p-12 text-center">
-              <h2 className="mb-2 text-2xl font-bold text-white">
+            <div className="rounded-2xl bg-card border border-border backdrop-blur-sm p-12 text-center">
+              <h2 className="mb-2 text-2xl font-bold text-card-foreground">
                 No passes yet
               </h2>
-              <p className="text-white/70 mb-6">
+              <p className="text-muted-foreground mb-6">
                 Vehicles you pass will appear here
               </p>
               <Button onClick={() => navigate("/")} className="mt-4">
