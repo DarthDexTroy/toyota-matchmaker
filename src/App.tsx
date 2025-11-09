@@ -12,6 +12,8 @@ import NotFound from "./pages/NotFound";
 import { mockVehicles } from "./data/mockVehicles";
 import { SwipeSession, UserPreferences, Vehicle } from "./types/vehicle";
 import { calculateMatchScore } from "./utils/matchScoring";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const queryClient = new QueryClient();
 
@@ -30,18 +32,75 @@ const App = () => {
     weights: {},
   });
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
+  const [isRescoring, setIsRescoring] = useState(false);
 
-  // Recalculate match scores when preferences change
+  // AI-based scoring with swipe learning
   useEffect(() => {
-    if (preferences) {
-      const scored = mockVehicles.map((v) => ({
-        ...v,
-        match_score: calculateMatchScore(v, preferences),
-      }));
-      scored.sort((a, b) => b.match_score - a.match_score);
-      setRankedVehicles(scored);
-    }
-  }, [preferences]);
+    if (!preferences) return;
+
+    const rescoreWithAI = async () => {
+      setIsRescoring(true);
+      
+      try {
+        const scoredVehicles = await Promise.all(
+          mockVehicles.map(async (vehicle) => {
+            try {
+              const { data, error } = await supabase.functions.invoke('ai-match-scorer', {
+                body: {
+                  vehicle,
+                  preferences,
+                  swipeHistory: {
+                    favorites: session.favorites,
+                    passes: session.passes
+                  },
+                  allVehicles: mockVehicles
+                }
+              });
+
+              if (error) {
+                console.error(`Error scoring vehicle ${vehicle.id}:`, error);
+                return { ...vehicle, match_score: calculateMatchScore(vehicle, preferences) };
+              }
+
+              return { ...vehicle, match_score: data.match_score };
+            } catch (err) {
+              console.error(`Failed to score vehicle ${vehicle.id}:`, err);
+              return { ...vehicle, match_score: calculateMatchScore(vehicle, preferences) };
+            }
+          })
+        );
+
+        scoredVehicles.sort((a, b) => b.match_score - a.match_score);
+        setRankedVehicles(scoredVehicles);
+        
+        // Show learning toast after a few swipes
+        if (session.favorites.length + session.passes.length > 2) {
+          toast({
+            title: "AI Adapted to Your Preferences",
+            description: "Match scores updated based on your swipes.",
+          });
+        }
+      } catch (error) {
+        console.error('Error rescoring vehicles:', error);
+        toast({
+          title: "Using Basic Scoring",
+          description: "AI scoring unavailable, using fallback algorithm.",
+          variant: "destructive",
+        });
+        
+        const fallbackScored = mockVehicles.map((v) => ({
+          ...v,
+          match_score: calculateMatchScore(v, preferences),
+        }));
+        fallbackScored.sort((a, b) => b.match_score - a.match_score);
+        setRankedVehicles(fallbackScored);
+      } finally {
+        setIsRescoring(false);
+      }
+    };
+
+    rescoreWithAI();
+  }, [preferences, session.favorites, session.passes]);
 
   const favoriteVehicles = rankedVehicles.filter((v) =>
     session.favorites.includes(v.id)
@@ -80,6 +139,7 @@ const App = () => {
                   session={session}
                   setSession={setSession}
                   rankedVehicles={rankedVehicles}
+                  isRescoring={isRescoring}
                 />
               }
             />
