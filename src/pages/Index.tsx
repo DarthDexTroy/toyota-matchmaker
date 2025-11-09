@@ -107,9 +107,6 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
             <h2 className="mb-2 text-3xl font-bold text-foreground">
               Find Your Perfect Toyota
             </h2>
-            <p className="text-muted-foreground">
-              Swipe right to save, left to pass. We'll learn your preferences!
-            </p>
           </div>
 
           <div className="flex justify-center">
@@ -126,7 +123,7 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
             <div className="rounded-2xl bg-card p-6 text-center shadow-[var(--shadow-card)]">
               <BarChart3 className="mx-auto mb-2 h-8 w-8 text-primary" />
               <div className="text-2xl font-bold text-card-foreground">
-                {rankedVehicles.length - remainingVehicles.length}
+                {session.passes.length}
               </div>
               <div className="text-sm text-muted-foreground">Reviewed</div>
             </div>
