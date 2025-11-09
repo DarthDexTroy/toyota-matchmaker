@@ -20,13 +20,13 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
           {/* Left: Logo and Title */}
           <button 
             onClick={() => navigate("/")}
-            className="flex items-center gap-3 shrink-0 hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-90 transition-opacity"
           >
-            <div className="h-10 w-10 flex items-center justify-center bg-white rounded-lg p-1.5">
+            <div className="h-12 w-12 sm:h-10 sm:w-10 flex items-center justify-center bg-white rounded-lg p-2 sm:p-1.5">
               <img src={toyotaLogo} alt="Toyota" className="h-full w-full object-contain" />
             </div>
-            <div className="hidden sm:block">
-              <div className="text-xl font-black text-primary-foreground leading-none tracking-tight">
+            <div className="block">
+              <div className="text-lg sm:text-xl font-black text-primary-foreground leading-none tracking-tight">
                 {title || "MatchMyToyota"}
               </div>
             </div>
@@ -48,7 +48,7 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
                   variant="ghost"
                   size="icon"
                   onClick={() => navigate("/favorites")}
-                  className="hidden sm:flex text-primary-foreground hover:bg-primary-foreground/20"
+                  className="text-primary-foreground hover:bg-primary-foreground/20"
                 >
                   <Heart className="h-5 w-5" />
                 </Button>
@@ -57,7 +57,7 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
                     variant="ghost"
                     size="icon"
                     onClick={onSettingsClick}
-                    className="hidden sm:flex text-primary-foreground hover:bg-primary-foreground/20"
+                    className="text-primary-foreground hover:bg-primary-foreground/20"
                   >
                     <Settings className="h-5 w-5" />
                   </Button>
