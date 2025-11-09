@@ -122,7 +122,7 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
           </div>
 
           {/* Stats */}
-          <div className="mx-auto mt-12 grid max-w-4xl grid-cols-3 gap-4">
+          <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4">
             <div className="rounded-2xl bg-card p-6 text-center shadow-[var(--shadow-card)]">
               <BarChart3 className="mx-auto mb-2 h-8 w-8 text-primary" />
               <div className="text-2xl font-bold text-card-foreground">
@@ -136,13 +136,6 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
                 {session.favorites.length}
               </div>
               <div className="text-sm text-muted-foreground">Favorites</div>
-            </div>
-            <div className="rounded-2xl bg-card p-6 text-center shadow-[var(--shadow-card)]">
-              <div className="mx-auto mb-2 text-2xl">🎯</div>
-              <div className="text-2xl font-bold text-card-foreground">
-                {remainingVehicles.length}
-              </div>
-              <div className="text-sm text-muted-foreground">Remaining</div>
             </div>
           </div>
         </main>

@@ -22,9 +22,7 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
             onClick={() => navigate("/")}
             className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-90 transition-opacity"
           >
-            <div className="h-10 w-10 sm:h-10 sm:w-10 flex items-center justify-center bg-white rounded-lg p-1.5">
-              <img src={toyotaLogo} alt="Toyota" className="h-full w-full object-contain" />
-            </div>
+            <img src={toyotaLogo} alt="Toyota" className="h-10 w-10 sm:h-10 sm:w-10 object-contain" />
             <div className="block">
               <div className="text-lg sm:text-xl font-black text-primary-foreground leading-none tracking-tight">
                 {title || "MatchMyToyota"}
@@ -33,33 +31,33 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
           </button>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {location.pathname === "/" && (
               <>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => navigate("/passes")}
-                  className="text-primary-foreground hover:bg-primary-foreground/20"
+                  className="text-primary-foreground hover:bg-primary-foreground/20 h-9 w-9 sm:h-10 sm:w-10"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => navigate("/favorites")}
-                  className="text-primary-foreground hover:bg-primary-foreground/20"
+                  className="text-primary-foreground hover:bg-primary-foreground/20 h-9 w-9 sm:h-10 sm:w-10"
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
                 {onSettingsClick && (
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={onSettingsClick}
-                    className="text-primary-foreground hover:bg-primary-foreground/20"
+                    className="text-primary-foreground hover:bg-primary-foreground/20 h-9 w-9 sm:h-10 sm:w-10"
                   >
-                    <Settings className="h-5 w-5" />
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 )}
               </>

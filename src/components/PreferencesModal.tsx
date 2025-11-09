@@ -169,18 +169,6 @@ export const PreferencesModal = ({ open, onComplete, initialPrefs }: Preferences
               />
             </div>
           </div>
-
-          {/* Search Radius */}
-          <div className="space-y-3">
-            <Label>Search Radius: {prefs.radius_miles} miles</Label>
-            <Slider
-              value={[prefs.radius_miles || 50]}
-              onValueChange={([radius_miles]) => setPrefs({ ...prefs, radius_miles })}
-              min={10}
-              max={200}
-              step={10}
-            />
-          </div>
         </div>
 
         <div className="flex justify-end gap-3">
