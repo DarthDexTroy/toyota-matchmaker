@@ -34,7 +34,7 @@ const App = () => {
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
   const [isRescoring, setIsRescoring] = useState(false);
 
-  // AI-based scoring with swipe learning
+  // AI-based scoring - only run on initial load or preference change
   useEffect(() => {
     if (!preferences) return;
 
@@ -100,7 +100,7 @@ const App = () => {
     };
 
     rescoreWithAI();
-  }, [preferences, session.favorites, session.passes]);
+  }, [preferences]); // Only rescore when preferences change, not on every swipe
 
   const favoriteVehicles = rankedVehicles.filter((v) =>
     session.favorites.includes(v.id)

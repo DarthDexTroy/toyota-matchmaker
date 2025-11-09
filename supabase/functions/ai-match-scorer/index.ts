@@ -70,9 +70,9 @@ serve(async (req) => {
   try {
     const { vehicle, preferences, swipeHistory, allVehicles } = await req.json();
     
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-    if (!GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     // Build the user prompt with all context
@@ -112,23 +112,22 @@ SWIPE HISTORY:
 
 Output only the integer match grade (0-100):`;
 
-    console.log("Calling Google Gemini API for match scoring...");
+    console.log("Calling Lovable AI for match scoring...");
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`, {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `${SYSTEM_PROMPT}\n\n${userPrompt}`
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 10,
-        }
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: userPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 10,
       }),
     });
 
@@ -143,11 +142,18 @@ Output only the integer match grade (0-100):`;
         });
       }
       
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Payment required" }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      
       throw new Error(`AI API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const aiResponse = data.choices?.[0]?.message?.content || "";
     
     console.log("AI raw response:", aiResponse);
 
