@@ -2,6 +2,3 @@ project_id = "xjjjfdscvjlrmxblmzst"
 
 [functions.toyota-chatbot]
 verify_jwt = false
-
-[functions.match-scorer]
-verify_jwt = false

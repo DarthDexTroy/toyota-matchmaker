@@ -12,7 +12,6 @@ import NotFound from "./pages/NotFound";
 import { mockVehicles } from "./data/mockVehicles";
 import { SwipeSession, UserPreferences, Vehicle } from "./types/vehicle";
 import { calculateMatchScore } from "./utils/matchScoring";
-import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
@@ -32,54 +31,17 @@ const App = () => {
   });
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
 
-  // Recalculate match scores when preferences or swipes change using AI
+  // Recalculate match scores when preferences change
   useEffect(() => {
-    const scoreVehicles = async () => {
-      if (!preferences) return;
-      
-      // Build swipe history with full vehicle data
-      const swipeHistory = {
-        favorites: mockVehicles.filter(v => session.favorites.includes(v.id)),
-        passes: mockVehicles.filter(v => session.passes.includes(v.id))
-      };
-      
-      const scoredVehicles = await Promise.all(
-        mockVehicles.map(async (vehicle) => {
-          try {
-            const { data, error } = await supabase.functions.invoke('match-scorer', {
-              body: { vehicle, preferences, swipeHistory }
-            });
-            
-            if (error) {
-              console.error('Error scoring vehicle:', vehicle.title, error);
-              // Fallback to algorithm if AI fails
-              return {
-                ...vehicle,
-                match_score: calculateMatchScore(vehicle, preferences),
-              };
-            }
-            
-            return {
-              ...vehicle,
-              match_score: data.score,
-            };
-          } catch (err) {
-            console.error('Error scoring vehicle:', vehicle.title, err);
-            // Fallback to algorithm if AI fails
-            return {
-              ...vehicle,
-              match_score: calculateMatchScore(vehicle, preferences),
-            };
-          }
-        })
-      );
-      
-      scoredVehicles.sort((a, b) => b.match_score - a.match_score);
-      setRankedVehicles(scoredVehicles);
-    };
-    
-    scoreVehicles();
-  }, [preferences, session.favorites, session.passes]);
+    if (preferences) {
+      const scored = mockVehicles.map((v) => ({
+        ...v,
+        match_score: calculateMatchScore(v, preferences),
+      }));
+      scored.sort((a, b) => b.match_score - a.match_score);
+      setRankedVehicles(scored);
+    }
+  }, [preferences]);
 
   const favoriteVehicles = rankedVehicles.filter((v) =>
     session.favorites.includes(v.id)
