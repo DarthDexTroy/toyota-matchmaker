@@ -34,7 +34,7 @@ const App = () => {
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
   const [isRescoring, setIsRescoring] = useState(false);
 
-  // AI-based scoring with swipe learning
+  // AI-based scoring on initial load only
   useEffect(() => {
     if (!preferences) return;
 
@@ -50,8 +50,8 @@ const App = () => {
                   vehicle,
                   preferences,
                   swipeHistory: {
-                    favorites: session.favorites,
-                    passes: session.passes
+                    favorites: [],
+                    passes: []
                   },
                   allVehicles: mockVehicles
                 }
@@ -72,14 +72,6 @@ const App = () => {
 
         scoredVehicles.sort((a, b) => b.match_score - a.match_score);
         setRankedVehicles(scoredVehicles);
-        
-        // Show learning toast after a few swipes
-        if (session.favorites.length + session.passes.length > 2) {
-          toast({
-            title: "AI Adapted to Your Preferences",
-            description: "Match scores updated based on your swipes.",
-          });
-        }
       } catch (error) {
         console.error('Error rescoring vehicles:', error);
         toast({
@@ -100,7 +92,7 @@ const App = () => {
     };
 
     rescoreWithAI();
-  }, [preferences, session.favorites, session.passes]);
+  }, [preferences]);
 
   const favoriteVehicles = rankedVehicles.filter((v) =>
     session.favorites.includes(v.id)
