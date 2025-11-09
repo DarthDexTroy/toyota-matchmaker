@@ -65,16 +65,20 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (currentIndex >= vehicles.length) return;
-    e.preventDefault();
     setDragging(true);
     setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!dragging) return;
-    e.preventDefault();
     const deltaX = e.touches[0].clientX - startPos.x;
     const deltaY = e.touches[0].clientY - startPos.y;
+    
+    // Only prevent scrolling if horizontal swipe is significant
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault();
+    }
+    
     setOffset({ x: deltaX, y: deltaY });
   };
 
@@ -129,7 +133,7 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
     <div className="relative w-full">
       <div
         className="relative mx-auto h-[700px] w-full max-w-xl cursor-grab active:cursor-grabbing"
-        style={{ touchAction: 'none' }}
+        style={{ touchAction: 'pan-y' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -147,7 +151,7 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
         ))}
       </div>
 
-      <div className="mt-8 flex items-center justify-center gap-4">
+      <div className="mt-8 flex items-center justify-center gap-4" style={{ touchAction: 'auto' }}>
         <Button
           variant="outline"
           size="icon"

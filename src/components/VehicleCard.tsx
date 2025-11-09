@@ -10,7 +10,7 @@ interface VehicleCardProps {
 export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
   return (
     <article
-      className="absolute h-full w-full select-none overflow-hidden rounded-3xl bg-white/3 ring-1 ring-white/15 backdrop-blur-sm pointer-events-none"
+      className="absolute h-full w-full select-none overflow-hidden rounded-3xl bg-white/3 ring-1 ring-white/15 backdrop-blur-sm"
       style={style}
     >
       {/* Image Section */}
@@ -28,7 +28,7 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
       </div>
 
       {/* Content Section */}
-      <div className="relative h-2/5 overflow-y-auto bg-gradient-to-b from-black/40 to-black/60 backdrop-blur-md p-6 flex flex-col pointer-events-auto">
+      <div className="relative h-2/5 overflow-y-auto bg-gradient-to-b from-black/40 to-black/60 backdrop-blur-md p-6 flex flex-col">
         <div className="mb-3">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
             {vehicle.title}
