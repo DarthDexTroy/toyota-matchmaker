@@ -34,7 +34,7 @@ const App = () => {
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
   const [isRescoring, setIsRescoring] = useState(false);
 
-  // AI-based scoring with swipe learning - batched to avoid rate limits
+  // Hybrid AI scoring: basic algorithm first, then AI refines top matches
   useEffect(() => {
     if (!preferences) return;
 
@@ -42,58 +42,64 @@ const App = () => {
       setIsRescoring(true);
       
       try {
-        const scoredVehicles: Vehicle[] = [];
-        const BATCH_SIZE = 8; // Process 8 vehicles at a time (under 10/min limit)
-        const DELAY_MS = 7000; // 7 second delay between batches
+        // Step 1: Use basic algorithm to pre-score all vehicles
+        const basicScored = mockVehicles.map((v) => ({
+          ...v,
+          match_score: calculateMatchScore(v, preferences),
+        }));
         
-        // Process vehicles in batches
-        for (let i = 0; i < mockVehicles.length; i += BATCH_SIZE) {
-          const batch = mockVehicles.slice(i, i + BATCH_SIZE);
+        // Sort by basic score and take top 15 for AI refinement
+        basicScored.sort((a, b) => b.match_score - a.match_score);
+        const topVehicles = basicScored.slice(0, 15);
+        const remainingVehicles = basicScored.slice(15);
+        
+        // Step 2: Send top vehicles to AI one at a time with delays
+        const aiScoredVehicles: Vehicle[] = [];
+        const DELAY_MS = 6500; // 6.5 seconds between requests (under 10/min limit)
+        
+        for (let i = 0; i < topVehicles.length; i++) {
+          const vehicle = topVehicles[i];
           
-          const batchResults = await Promise.all(
-            batch.map(async (vehicle) => {
-              try {
-                const { data, error } = await supabase.functions.invoke('ai-match-scorer', {
-                  body: {
-                    vehicle,
-                    preferences,
-                    swipeHistory: {
-                      favorites: session.favorites,
-                      passes: session.passes
-                    },
-                    allVehicles: mockVehicles
-                  }
-                });
-
-                if (error) {
-                  console.error(`Error scoring vehicle ${vehicle.id}:`, error);
-                  return { ...vehicle, match_score: calculateMatchScore(vehicle, preferences) };
-                }
-
-                return { ...vehicle, match_score: data.match_score };
-              } catch (err) {
-                console.error(`Failed to score vehicle ${vehicle.id}:`, err);
-                return { ...vehicle, match_score: calculateMatchScore(vehicle, preferences) };
+          try {
+            const { data, error } = await supabase.functions.invoke('ai-match-scorer', {
+              body: {
+                vehicle,
+                preferences,
+                swipeHistory: {
+                  favorites: session.favorites,
+                  passes: session.passes
+                },
+                allVehicles: mockVehicles
               }
-            })
-          );
+            });
+
+            if (error) {
+              console.error(`Error scoring vehicle ${vehicle.id}:`, error);
+              aiScoredVehicles.push(vehicle); // Keep basic score
+            } else {
+              aiScoredVehicles.push({ ...vehicle, match_score: data.match_score });
+            }
+          } catch (err) {
+            console.error(`Failed to score vehicle ${vehicle.id}:`, err);
+            aiScoredVehicles.push(vehicle); // Keep basic score
+          }
           
-          scoredVehicles.push(...batchResults);
-          
-          // Add delay between batches (except for last batch)
-          if (i + BATCH_SIZE < mockVehicles.length) {
+          // Add delay between requests (except for last one)
+          if (i < topVehicles.length - 1) {
             await new Promise(resolve => setTimeout(resolve, DELAY_MS));
           }
         }
-
-        scoredVehicles.sort((a, b) => b.match_score - a.match_score);
-        setRankedVehicles(scoredVehicles);
+        
+        // Step 3: Combine AI-scored top vehicles with basic-scored remaining ones
+        const allScored = [...aiScoredVehicles, ...remainingVehicles];
+        allScored.sort((a, b) => b.match_score - a.match_score);
+        setRankedVehicles(allScored);
         
         // Show learning toast after a few swipes
         if (session.favorites.length + session.passes.length > 2) {
           toast({
-            title: "AI Adapted to Your Preferences",
-            description: "Match scores updated based on your swipes.",
+            title: "AI Refined Top Matches",
+            description: "Top 15 vehicles scored with AI based on your preferences.",
           });
         }
       } catch (error) {
