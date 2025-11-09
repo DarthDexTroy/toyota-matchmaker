@@ -18,13 +18,12 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const { toast } = useToast();
+  const deckRef = useRef<HTMLDivElement | null>(null);
 
   const handleSwipe = (direction: "left" | "right") => {
     if (currentIndex >= vehicles.length) return;
-
     const vehicle = vehicles[currentIndex];
     onSwipe(vehicle.id, direction);
-
     toast({
       title: direction === "right" ? "Added to Favorites!" : "Passed",
       description:
@@ -33,28 +32,23 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
           : `${vehicle.title} ${vehicle.subtitle} skipped`,
       duration: 2000,
     });
-
     setCurrentIndex((prev) => prev + 1);
     setOffset({ x: 0, y: 0 });
   };
 
+  // --- Mouse / touch handlers ------------------------------------------------
   const handleMouseDown = (e: React.MouseEvent) => {
     if (currentIndex >= vehicles.length) return;
     setDragging(true);
     setStartPos({ x: e.clientX, y: e.clientY });
   };
-
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!dragging) return;
-    const deltaX = e.clientX - startPos.x;
-    const deltaY = e.clientY - startPos.y;
-    setOffset({ x: deltaX, y: deltaY });
+    setOffset({ x: e.clientX - startPos.x, y: e.clientY - startPos.y });
   };
-
-  const handleMouseUp = () => {
+  const finishDrag = () => {
     if (!dragging) return;
     setDragging(false);
-
     const threshold = 100;
     if (Math.abs(offset.x) > threshold) {
       handleSwipe(offset.x > 0 ? "right" : "left");
@@ -68,37 +62,25 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
     setDragging(true);
     setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
   };
-
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!dragging) return;
     const deltaX = e.touches[0].clientX - startPos.x;
     const deltaY = e.touches[0].clientY - startPos.y;
-    
-    // Only prevent scrolling if horizontal swipe is significant
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      e.preventDefault();
-    }
-    
+    // Prevent scroll when swiping mostly horizontally (Safari requires this)
+    if (Math.abs(deltaX) > Math.abs(deltaY)) e.preventDefault();
     setOffset({ x: deltaX, y: deltaY });
   };
+  const handleTouchEnd = () => finishDrag();
 
-  const handleTouchEnd = () => {
-    if (!dragging) return;
-    setDragging(false);
+  // Also finish drag if mouse goes outside the deck
+  const handleMouseLeave = () => finishDrag();
+  const handleMouseUp = () => finishDrag();
 
-    const threshold = 100;
-    if (Math.abs(offset.x) > threshold) {
-      handleSwipe(offset.x > 0 ? "right" : "left");
-    } else {
-      setOffset({ x: 0, y: 0 });
-    }
-  };
-
+  // --- Styles ----------------------------------------------------------------
   const getCardStyle = (index: number) => {
     const isActive = index === currentIndex;
     const diff = index - currentIndex;
-
-    if (diff < 0) return { display: "none" };
+    if (diff < 0) return { display: "none" }; // already swiped
 
     const rotation = isActive ? offset.x * 0.1 : 0;
     const scale = 1 - diff * 0.05;
@@ -109,21 +91,18 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
     return {
       transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg) scale(${scale})`,
       opacity,
-      zIndex: vehicles.length - diff,
-      transition: dragging ? "none" : "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-    };
+      zIndex: 100 - diff, // stack within the deck
+      transition: dragging ? "none" : "transform 0.25s ease, opacity 0.25s ease",
+      pointerEvents: isActive ? "auto" : "none", // only top card is interactive
+    } as React.CSSProperties;
   };
 
   if (currentIndex >= vehicles.length) {
     return (
       <div className="flex h-[600px] items-center justify-center rounded-3xl bg-card p-8 text-center shadow-[var(--shadow-card)]">
         <div>
-          <h3 className="mb-2 text-2xl font-bold text-card-foreground">
-            No more vehicles!
-          </h3>
-          <p className="text-muted-foreground">
-            You've reviewed all available matches.
-          </p>
+          <h3 className="mb-2 text-2xl font-bold text-card-foreground">No more vehicles!</h3>
+          <p className="text-muted-foreground">You&apos;ve reviewed all available matches.</p>
         </div>
       </div>
     );
@@ -131,27 +110,29 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
 
   return (
     <div className="relative w-full">
+      {/* Deck area: absolute-stacked cards inside a relative container */}
       <div
-        className="relative mx-auto h-[700px] w-full max-w-xl cursor-grab active:cursor-grabbing"
-        style={{ touchAction: 'pan-y' }}
+        ref={deckRef}
+        className="relative mx-auto h-[700px] w-full max-w-xl select-none z-10"
+        style={{ touchAction: "pan-y" }} // allow vertical page scroll when not swiping
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+        {/* Absolutely position each card to stack them */}
         {vehicles.map((vehicle, index) => (
-          <VehicleCard
-            key={vehicle.id}
-            vehicle={vehicle}
-            style={getCardStyle(index)}
-          />
+          <div key={vehicle.id} className="absolute inset-0 will-change-transform" style={getCardStyle(index)}>
+            <VehicleCard vehicle={vehicle} />
+          </div>
         ))}
       </div>
 
-      <div className="mt-8 flex items-center justify-center gap-4" style={{ touchAction: 'auto' }}>
+      {/* Controls row: ensure it sits ABOVE the deck for reliable taps */}
+      <div className="mt-8 flex items-center justify-center gap-4 relative z-20" style={{ touchAction: "auto" }}>
         <Button
           variant="outline"
           size="icon"
@@ -162,13 +143,7 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
           <X className="h-8 w-8" />
         </Button>
 
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-12 w-12 rounded-full"
-          onClick={onUndo}
-          disabled={!canUndo}
-        >
+        <Button variant="outline" size="icon" className="h-12 w-12 rounded-full" onClick={onUndo} disabled={!canUndo}>
           <Undo2 className="h-5 w-5" />
         </Button>
 
