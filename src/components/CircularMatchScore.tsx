@@ -16,21 +16,20 @@ export const CircularMatchScore = ({ score, size = "md" }: CircularMatchScorePro
     lg: "w-24 h-24",
   };
 
-  const getScoreColor = () => {
-    if (score >= 85) return "hsl(var(--match-excellent))";
-    if (score >= 70) return "hsl(var(--match-good))";
-    if (score >= 50) return "hsl(var(--match-fair))";
-    return "hsl(var(--match-poor))";
-  };
-
   return (
-    <div className={cn("relative", sizeClasses[size])}>
-      <svg className="w-full h-full transform -rotate-90">
+    <div className={cn("relative grid place-items-center rounded-full bg-black/40 backdrop-blur-md ring-1 ring-white/20", sizeClasses[size])}>
+      <svg className="absolute inset-0 h-full w-full -rotate-90">
+        <defs>
+          <linearGradient id="toyotaStroke" x1="0" x2="1">
+            <stop offset="0" stopColor="#EB0A1E" />
+            <stop offset="1" stopColor="#A50000" />
+          </linearGradient>
+        </defs>
         <circle
           cx="50%"
           cy="50%"
           r={radius}
-          stroke="hsl(var(--border))"
+          stroke="rgba(255,255,255,0.15)"
           strokeWidth="6"
           fill="none"
         />
@@ -38,7 +37,7 @@ export const CircularMatchScore = ({ score, size = "md" }: CircularMatchScorePro
           cx="50%"
           cy="50%"
           r={radius}
-          stroke={getScoreColor()}
+          stroke="url(#toyotaStroke)"
           strokeWidth="6"
           fill="none"
           strokeDasharray={circumference}
@@ -47,19 +46,19 @@ export const CircularMatchScore = ({ score, size = "md" }: CircularMatchScorePro
           className="transition-all duration-500"
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={cn(
-          "font-bold text-white",
+      <div className="text-center">
+        <div className={cn(
+          "font-extrabold text-white leading-none",
           size === "sm" ? "text-lg" : size === "md" ? "text-xl" : "text-2xl"
         )}>
           {score}
-        </span>
-        <span className={cn(
-          "text-white/90 uppercase",
+        </div>
+        <div className={cn(
+          "font-semibold tracking-wide text-white/70",
           size === "sm" ? "text-[8px]" : size === "md" ? "text-[10px]" : "text-xs"
         )}>
-          Match
-        </span>
+          MATCH
+        </div>
       </div>
     </div>
   );
