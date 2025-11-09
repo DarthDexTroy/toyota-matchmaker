@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Settings, Heart, X, MessageSquare } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AIAssistant } from "./AIAssistant";
-import toyotaLogo from "@/assets/toyota-logo.png";
+import toyotaLogo from "@/assets/toyota-emblem.png";
 
 interface AppHeaderProps {
   onSettingsClick?: () => void;
@@ -22,7 +22,7 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
             onClick={() => navigate("/")}
             className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-90 transition-opacity"
           >
-            <div className="h-14 w-14 sm:h-12 sm:w-12 flex items-center justify-center bg-white rounded-lg p-2">
+            <div className="h-10 w-10 sm:h-10 sm:w-10 flex items-center justify-center bg-white rounded-lg p-1.5">
               <img src={toyotaLogo} alt="Toyota" className="h-full w-full object-contain" />
             </div>
             <div className="block">

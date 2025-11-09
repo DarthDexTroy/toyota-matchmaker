@@ -43,15 +43,21 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
         </div>
 
         <div className="mb-4 flex gap-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-sm">
-            <Gauge className="h-4 w-4 text-secondary-foreground" />
-            <span className="font-medium text-secondary-foreground">
+          <div className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-orange-500 to-green-500 px-3 py-1.5 text-sm">
+            <Gauge className="h-4 w-4 text-white" />
+            <span className="font-medium text-white">
               {vehicle.mpg_or_range}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-sm">
-            <Droplet className="h-4 w-4 text-secondary-foreground" />
-            <span className="font-medium capitalize text-secondary-foreground">
+          <div className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm ${
+            vehicle.powertrain.toLowerCase().includes('hybrid') 
+              ? 'bg-green-600' 
+              : vehicle.powertrain.toLowerCase().includes('electric')
+              ? 'bg-yellow-600'
+              : 'bg-gray-600'
+          }`}>
+            <Droplet className="h-4 w-4 text-white" />
+            <span className="font-medium capitalize text-white">
               {vehicle.powertrain}
             </span>
           </div>

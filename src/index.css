@@ -115,6 +115,12 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: 
+      radial-gradient(circle at 20% 30%, hsl(0, 70%, 45%) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, hsl(0, 60%, 25%) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsl(0, 0%, 25%) 0%, transparent 60%),
+      hsl(0, 0%, 15%);
+    background-attachment: fixed;
   }
 }
