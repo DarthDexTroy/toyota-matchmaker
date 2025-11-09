@@ -22,7 +22,7 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
             onClick={() => navigate("/")}
             className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-90 transition-opacity"
           >
-            <div className="h-12 w-12 sm:h-10 sm:w-10 flex items-center justify-center bg-white rounded-lg p-2 sm:p-1.5">
+            <div className="h-14 w-14 sm:h-12 sm:w-12 flex items-center justify-center bg-white rounded-lg p-2">
               <img src={toyotaLogo} alt="Toyota" className="h-full w-full object-contain" />
             </div>
             <div className="block">
@@ -40,7 +40,7 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
                   variant="ghost"
                   size="icon"
                   onClick={() => navigate("/passes")}
-                  className="hidden sm:flex text-primary-foreground hover:bg-primary-foreground/20"
+                  className="text-primary-foreground hover:bg-primary-foreground/20"
                 >
                   <X className="h-5 w-5" />
                 </Button>
