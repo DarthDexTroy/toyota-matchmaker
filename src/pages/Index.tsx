@@ -96,6 +96,7 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
       <PreferencesModal
         open={showPrefsModal}
         onComplete={handlePreferencesComplete}
+        onClose={() => setShowPrefsModal(false)}
         initialPrefs={preferences}
       />
       

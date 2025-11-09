@@ -10,10 +10,11 @@ import { Slider } from "./ui/slider";
 interface PreferencesModalProps {
   open: boolean;
   onComplete: (prefs: UserPreferences) => void;
+  onClose?: () => void;
   initialPrefs?: UserPreferences | null;
 }
 
-export const PreferencesModal = ({ open, onComplete, initialPrefs }: PreferencesModalProps) => {
+export const PreferencesModal = ({ open, onComplete, onClose, initialPrefs }: PreferencesModalProps) => {
   const [prefs, setPrefs] = useState<UserPreferences>(
     initialPrefs || {
       zip: null,
@@ -41,7 +42,7 @@ export const PreferencesModal = ({ open, onComplete, initialPrefs }: Preferences
   };
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose?.()}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Find Your Perfect Toyota</DialogTitle>
