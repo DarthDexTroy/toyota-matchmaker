@@ -34,7 +34,7 @@ const App = () => {
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
   const [isRescoring, setIsRescoring] = useState(false);
 
-  // AI-based scoring with swipe learning
+  // AI-based scoring with swipe learning - batched to avoid rate limits
   useEffect(() => {
     if (!preferences) return;
 
@@ -42,33 +42,49 @@ const App = () => {
       setIsRescoring(true);
       
       try {
-        const scoredVehicles = await Promise.all(
-          mockVehicles.map(async (vehicle) => {
-            try {
-              const { data, error } = await supabase.functions.invoke('ai-match-scorer', {
-                body: {
-                  vehicle,
-                  preferences,
-                  swipeHistory: {
-                    favorites: session.favorites,
-                    passes: session.passes
-                  },
-                  allVehicles: mockVehicles
-                }
-              });
+        const scoredVehicles: Vehicle[] = [];
+        const BATCH_SIZE = 8; // Process 8 vehicles at a time (under 10/min limit)
+        const DELAY_MS = 7000; // 7 second delay between batches
+        
+        // Process vehicles in batches
+        for (let i = 0; i < mockVehicles.length; i += BATCH_SIZE) {
+          const batch = mockVehicles.slice(i, i + BATCH_SIZE);
+          
+          const batchResults = await Promise.all(
+            batch.map(async (vehicle) => {
+              try {
+                const { data, error } = await supabase.functions.invoke('ai-match-scorer', {
+                  body: {
+                    vehicle,
+                    preferences,
+                    swipeHistory: {
+                      favorites: session.favorites,
+                      passes: session.passes
+                    },
+                    allVehicles: mockVehicles
+                  }
+                });
 
-              if (error) {
-                console.error(`Error scoring vehicle ${vehicle.id}:`, error);
+                if (error) {
+                  console.error(`Error scoring vehicle ${vehicle.id}:`, error);
+                  return { ...vehicle, match_score: calculateMatchScore(vehicle, preferences) };
+                }
+
+                return { ...vehicle, match_score: data.match_score };
+              } catch (err) {
+                console.error(`Failed to score vehicle ${vehicle.id}:`, err);
                 return { ...vehicle, match_score: calculateMatchScore(vehicle, preferences) };
               }
-
-              return { ...vehicle, match_score: data.match_score };
-            } catch (err) {
-              console.error(`Failed to score vehicle ${vehicle.id}:`, err);
-              return { ...vehicle, match_score: calculateMatchScore(vehicle, preferences) };
-            }
-          })
-        );
+            })
+          );
+          
+          scoredVehicles.push(...batchResults);
+          
+          // Add delay between batches (except for last batch)
+          if (i + BATCH_SIZE < mockVehicles.length) {
+            await new Promise(resolve => setTimeout(resolve, DELAY_MS));
+          }
+        }
 
         scoredVehicles.sort((a, b) => b.match_score - a.match_score);
         setRankedVehicles(scoredVehicles);
