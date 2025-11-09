@@ -137,8 +137,9 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
             {isRescoring ? (
               <div className="text-center">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#EB0A1E] mx-auto mb-6"></div>
-                <h2 className="text-2xl font-bold text-white mb-2">AI Analyzing Your Matches</h2>
-                <p className="text-white/60">Learning from your preferences...</p>
+                <h2 className="text-2xl font-bold text-white mb-2">AI Refining Your Top Matches</h2>
+                <p className="text-white/60">Analyzing the 15 best-matching vehicles with AI...</p>
+                <p className="text-white/40 text-sm mt-2">This takes about 90 seconds</p>
               </div>
             ) : (
               <SwipeDeck
