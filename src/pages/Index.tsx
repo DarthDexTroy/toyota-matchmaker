@@ -98,7 +98,7 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
         initialPrefs={preferences}
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
+      <div className="min-h-screen bg-gradient-to-br from-muted via-muted/80 to-muted/60">
         <AppHeader onSettingsClick={handleEditPreferences} />
 
         {/* Main Content */}

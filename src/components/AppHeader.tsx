@@ -22,8 +22,8 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
             onClick={() => navigate("/")}
             className="flex items-center gap-3 shrink-0 hover:opacity-90 transition-opacity"
           >
-            <div className="h-10 w-auto flex items-center">
-              <img src={toyotaLogo} alt="Toyota" className="h-8 w-auto brightness-0 invert" />
+            <div className="h-10 w-10 flex items-center justify-center bg-white rounded-lg p-1.5">
+              <img src={toyotaLogo} alt="Toyota" className="h-full w-full object-contain" />
             </div>
             <div className="hidden sm:block">
               <div className="text-xl font-black text-primary-foreground leading-none tracking-tight">

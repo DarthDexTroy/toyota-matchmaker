@@ -14,7 +14,7 @@ export const VehicleDetail = ({ vehicle }: VehicleDetailProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
+    <div className="min-h-screen bg-gradient-to-br from-muted via-muted/80 to-muted/60">
       <AppHeader title="Vehicle Details" />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
