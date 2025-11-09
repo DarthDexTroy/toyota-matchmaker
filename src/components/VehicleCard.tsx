@@ -28,7 +28,7 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
       </div>
 
       {/* Content Section */}
-      <div className="relative h-2/5 overflow-y-auto bg-card p-6">
+      <div className="relative h-2/5 overflow-y-auto bg-card p-6 flex flex-col">
         <div className="mb-3">
           <h2 className="text-2xl font-bold text-card-foreground">
             {vehicle.title}
@@ -57,7 +57,7 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
           </div>
         </div>
 
-        <div className="mb-3">
+        <div className="mb-3 flex-1">
           <h3 className="mb-2 text-sm font-semibold text-card-foreground">
             Key Features
           </h3>
@@ -73,7 +73,7 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-3 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between pt-3 text-xs text-muted-foreground border-t border-border">
           <span>
             {vehicle.ext_color} • {vehicle.int_color}
           </span>

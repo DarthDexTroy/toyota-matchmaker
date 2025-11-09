@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Vehicle } from "@/types/vehicle";
 import { VehicleCard } from "@/components/VehicleCard";
-import { ArrowLeft, RotateCcw, Eye } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { AppHeader } from "@/components/AppHeader";
 
 interface PassesProps {
   vehicles: Vehicle[];
@@ -14,24 +15,20 @@ export const Passes = ({ vehicles, onRestore }: PassesProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
-      <header className="border-b border-border bg-gradient-to-r from-primary via-primary/90 to-accent backdrop-blur-sm">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="text-primary-foreground hover:bg-primary-foreground/20">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex h-10 items-center justify-center rounded-lg bg-primary-foreground/20 px-3 border-2 border-primary-foreground/40">
-              <span className="text-lg font-black text-primary-foreground tracking-wider">TOYOTA</span>
-            </div>
-            <h1 className="text-2xl font-bold text-primary-foreground">Passed Vehicles</h1>
-          </div>
-          <div className="text-sm text-primary-foreground/80">
-            {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""}
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Swiping
+          </Button>
+          <h1 className="text-3xl font-bold text-foreground mt-4 mb-2">Passed Vehicles</h1>
+          <p className="text-muted-foreground">
+            {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""} passed
+          </p>
+        </div>
+
         {vehicles.length === 0 ? (
           <div className="flex h-[400px] items-center justify-center">
             <div className="text-center">
@@ -49,23 +46,23 @@ export const Passes = ({ vehicles, onRestore }: PassesProps) => {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {vehicles.map((vehicle) => (
-              <div key={vehicle.id} className="relative">
-                <div className="relative h-[500px]">
+              <div key={vehicle.id} className="relative group">
+                <div className="relative h-[500px] rounded-3xl overflow-hidden">
                   <VehicleCard vehicle={vehicle} />
                 </div>
-                <div className="absolute -top-2 -right-2 z-10 flex gap-2">
+                <div className="absolute bottom-4 left-0 right-0 flex gap-2 px-4 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button
                     variant="default"
                     size="sm"
-                    className="h-10 w-10 rounded-full p-0 shadow-lg bg-accent hover:bg-accent/90"
+                    className="flex-1 shadow-lg bg-accent hover:bg-accent/90"
                     onClick={() => navigate(`/vehicle/${vehicle.id}`)}
                   >
-                    <Eye className="h-4 w-4" />
+                    View Details
                   </Button>
                   <Button
                     variant="secondary"
                     size="sm"
-                    className="h-10 w-10 rounded-full p-0 shadow-lg"
+                    className="shadow-lg"
                     onClick={() => onRestore(vehicle.id)}
                   >
                     <RotateCcw className="h-4 w-4" />

@@ -1,0 +1,4 @@
+project_id = "xjjjfdscvjlrmxblmzst"
+
+[functions.toyota-chatbot]
+verify_jwt = false

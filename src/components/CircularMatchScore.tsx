@@ -49,13 +49,13 @@ export const CircularMatchScore = ({ score, size = "md" }: CircularMatchScorePro
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={cn(
-          "font-bold text-foreground",
+          "font-bold text-white",
           size === "sm" ? "text-lg" : size === "md" ? "text-xl" : "text-2xl"
         )}>
           {score}
         </span>
         <span className={cn(
-          "text-muted-foreground uppercase",
+          "text-white/90 uppercase",
           size === "sm" ? "text-[8px]" : size === "md" ? "text-[10px]" : "text-xs"
         )}>
           Match

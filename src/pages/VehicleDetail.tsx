@@ -4,6 +4,7 @@ import { ArrowLeft, Gauge, Droplet, BadgeCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CircularMatchScore } from "@/components/CircularMatchScore";
 import { CostEstimator } from "@/components/CostEstimator";
+import { AppHeader } from "@/components/AppHeader";
 
 interface VehicleDetailProps {
   vehicle: Vehicle;
@@ -14,16 +15,13 @@ export const VehicleDetail = ({ vehicle }: VehicleDetailProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
-      <header className="border-b border-border bg-gradient-to-r from-primary via-primary/90 to-accent backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto flex items-center gap-4 px-4 py-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="text-primary-foreground hover:bg-primary-foreground/20">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-2xl font-bold text-primary-foreground">Vehicle Details</h1>
-        </div>
-      </header>
+      <AppHeader />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
+        <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 mb-4">
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Left Column - Image & Info */}
           <div className="space-y-6">
