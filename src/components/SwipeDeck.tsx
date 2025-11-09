@@ -65,12 +65,14 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (currentIndex >= vehicles.length) return;
+    e.preventDefault();
     setDragging(true);
     setStartPos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!dragging) return;
+    e.preventDefault();
     const deltaX = e.touches[0].clientX - startPos.x;
     const deltaY = e.touches[0].clientY - startPos.y;
     setOffset({ x: deltaX, y: deltaY });
@@ -127,6 +129,7 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
     <div className="relative w-full">
       <div
         className="relative mx-auto h-[700px] w-full max-w-xl cursor-grab active:cursor-grabbing"
+        style={{ touchAction: 'none' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
