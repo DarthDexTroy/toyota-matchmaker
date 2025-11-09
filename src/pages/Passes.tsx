@@ -39,8 +39,10 @@ export const Passes = ({ vehicles, onRestore }: PassesProps) => {
             <ArrowLeft className="h-4 w-4" />
             Back to Swiping
           </Button>
-          <h1 className="mt-4 mb-2 text-4xl font-black leading-tight tracking-tight text-foreground">
-            Passed Vehicles
+          <h1 className="mt-4 mb-2 text-4xl font-black leading-tight tracking-tight">
+            <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent drop-shadow-lg">
+              Passed Vehicles
+            </span>
           </h1>
           <p className="text-muted-foreground">
             {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""} passed
