@@ -51,17 +51,6 @@ export const PreferencesModal = ({ open, onComplete, initialPrefs }: Preferences
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* ZIP Code */}
-          <div className="space-y-2">
-            <Label htmlFor="zip">ZIP Code *</Label>
-            <Input
-              id="zip"
-              placeholder="Enter your ZIP code"
-              value={prefs.zip || ""}
-              onChange={(e) => setPrefs({ ...prefs, zip: e.target.value })}
-            />
-          </div>
-
           {/* Body Style */}
           <div className="space-y-2">
             <Label htmlFor="body_style">Preferred Body Style</Label>

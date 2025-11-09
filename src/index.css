@@ -8,34 +8,34 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 10%;
+    --background: 0 0% 96%;
+    --foreground: 0 0% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 0 0% 15%;
 
-    /* Vibrant Toyota red as primary */
-    --primary: 0 100% 45%;
+    /* Toyota red/dark red theme */
+    --primary: 0 85% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 100% 95%;
-    --secondary-foreground: 210 100% 30%;
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 0 0% 25%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 210 100% 50%;
+    --accent: 0 75% 35%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 85% 50%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 85% 45%;
 
     --radius: 1rem;
 
@@ -45,15 +45,15 @@ All colors MUST be HSL.
     --match-fair: 25 95% 53%;
     --match-poor: 0 84% 60%;
 
-    /* Vibrant gradients */
+    /* Red/Gray gradients */
     --gradient-overlay: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(0 85% 50%) 0%, hsl(0 70% 45%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 96%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 45%) 0%, hsl(0 75% 35%) 100%);
 
     /* Shadows */
-    --shadow-card: 0 10px 40px -10px hsl(0 0% 0% / 0.15);
-    --shadow-card-hover: 0 20px 50px -15px hsl(0 0% 0% / 0.25);
-    --shadow-primary: 0 10px 30px -5px hsl(0 85% 50% / 0.3);
+    --shadow-card: 0 10px 40px -10px hsl(0 0% 0% / 0.12);
+    --shadow-card-hover: 0 20px 50px -15px hsl(0 0% 0% / 0.2);
+    --shadow-primary: 0 10px 30px -5px hsl(0 85% 45% / 0.3);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 20%;
@@ -66,37 +66,37 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 12%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 0 100% 45%;
+    --primary: 0 85% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 100% 20%;
-    --secondary-foreground: 210 100% 90%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 85%;
 
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 210 100% 50%;
+    --accent: 0 75% 40%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 100% 45%;
+    --border: 0 0% 22%;
+    --input: 0 0% 22%;
+    --ring: 0 85% 50%;
 
     --gradient-overlay: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 12%) 0%, hsl(0 0% 10%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(0 100% 45%) 0%, hsl(0 85% 40%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 15%) 0%, hsl(0 0% 12%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(0 85% 50%) 0%, hsl(0 75% 40%) 100%);
 
     --sidebar-background: 0 0% 10%;
     --sidebar-foreground: 0 0% 90%;

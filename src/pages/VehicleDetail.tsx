@@ -15,7 +15,7 @@ export const VehicleDetail = ({ vehicle }: VehicleDetailProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/10">
-      <AppHeader />
+      <AppHeader title="Vehicle Details" />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="gap-2 mb-4">

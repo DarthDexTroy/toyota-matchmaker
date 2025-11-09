@@ -85,10 +85,11 @@ export const AIAssistant = () => {
       <SheetTrigger asChild>
         <Button 
           variant="ghost" 
-          className="text-primary-foreground hover:bg-primary-foreground/20 gap-2"
+          size="icon"
+          className="text-primary-foreground hover:bg-primary-foreground/20"
+          title="AI Assistant"
         >
           <Sparkles className="h-5 w-5" />
-          <span className="hidden sm:inline">AI Assistant</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-0">
