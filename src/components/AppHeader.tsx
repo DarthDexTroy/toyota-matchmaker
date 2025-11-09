@@ -25,7 +25,7 @@ export const AppHeader = ({ onSettingsClick, title }: AppHeaderProps) => {
             <img src={toyotaLogo} alt="Toyota" className="h-10 w-10 sm:h-10 sm:w-10 object-contain mt-2" />
             <div className="block">
               <div className="text-lg sm:text-xl font-black text-primary-foreground leading-none tracking-tighter uppercase" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: 900 }}>
-                {title || "MatchMyToyota"}
+                {title || "YotaMatch"}
               </div>
             </div>
           </button>
