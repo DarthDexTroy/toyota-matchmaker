@@ -28,7 +28,7 @@ export const VehicleCard = ({ vehicle, style }: VehicleCardProps) => {
       </div>
 
       {/* Content Section */}
-      <div className="relative h-2/5 overflow-y-auto bg-gradient-to-b from-black/40 to-black/60 backdrop-blur-md p-6 flex flex-col">
+      <div className="relative h-2/5 overflow-y-auto bg-gradient-to-b from-black/40 to-black/60 backdrop-blur-md p-6 flex flex-col" style={{ touchAction: "pan-y" }}>
         <div className="mb-3">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
             {vehicle.title}

@@ -91,9 +91,9 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
     return {
       transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg) scale(${scale})`,
       opacity,
-      zIndex: 100 - diff,                   // stack within the deck
+      zIndex: 10 - diff,
       transition: dragging ? "none" : "transform 0.25s ease, opacity 0.25s ease",
-      pointerEvents: isActive ? "auto" : "none" // only top card is interactive
+      pointerEvents: isActive ? "auto" : "none"
     } as React.CSSProperties;
   };
 
@@ -113,8 +113,8 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
       {/* Deck area: absolute-stacked cards inside a relative container */}
       <div
         ref={deckRef}
-        className="relative mx-auto h-[700px] w-full max-w-xl select-none z-10"
-        style={{ touchAction: "pan-y" }}  // allow vertical page scroll when not swiping
+        className="relative mx-auto h-[700px] w-full max-w-xl select-none"
+        style={{ touchAction: "manipulation" }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -136,7 +136,7 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
       </div>
 
       {/* Controls row: ensure it sits ABOVE the deck for reliable taps */}
-      <div className="mt-8 flex items-center justify-center gap-4 relative z-20" style={{ touchAction: "auto" }}>
+      <div className="mt-8 flex items-center justify-center gap-4 relative" style={{ zIndex: 1000, touchAction: "manipulation" }}>
         <Button
           variant="outline"
           size="icon"
