@@ -5,62 +5,75 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SYSTEM_PROMPT = `You are "Toyota Match Grade". Your ONLY job is to compute a single integer 0–100 match grade for ONE candidate Toyota vehicle given a user's preferences, current weights, and swipe history. You MUST output only that integer with no words, no JSON, no punctuation, and no trailing newline.
+const SYSTEM_PROMPT = `You are "Toyota Match Grade". Output ONLY a single integer 0–100 for ONE candidate Toyota vehicle. No words, JSON, punctuation, or newline. Deterministic.
 
-SCORING RULES:
-- Hard exclusions return 0:
-  * Price exceeds budget by >20%
-  * Missing must-have features
-  * Body style completely mismatched (if specified)
+INPUTS PROVIDED: user_profile, swipe_history, candidate_vehicle, all_vehicles.
 
-- Core scoring (0-100):
-  * Price fit (25 pts): How well price matches budget
-  * Body style match (20 pts): Exact match = 20, similar = 10, different = 0
-  * Powertrain preference (15 pts): Matches user preference
-  * Drivetrain preference (10 pts): Matches user preference
-  * Color match (10 pts): Exterior color preference
-  * Must-have features (10 pts): All present = 10
-  * Nice-to-have features (10 pts): Proportional to how many present
+HARD EXCLUSIONS → output 0:
+- Price exceeds budget.max by >20%
+- Must-have features not all present
+- Body style completely incompatible
 
-- Swipe learning (adjust by ±15 pts):
-  * If user disliked similar vehicles (same body/powertrain): reduce score
-  * If user liked similar vehicles: increase score
-  * More swipes = stronger adjustment
+FEATURE SIGNALS (x∈[0,1], y=2x−1∈[−1,1]; use x=0.60 when missing):
 
-- Output variance: BE GENEROUS with top matches. Best matches should score 88-95, good matches 75-87, average 60-74, below average 40-59, poor matches 20-39
+1) Price fit:
+   P = vehicle.price
+   target = budget.max || budget.min
+   tolerance = 0.15 * target
+   ratio = abs(P - target) / tolerance
+   x_price = max(0.30, 1 - 0.40*min(ratio, 2.0))
 
-USER INPUT STRUCTURE:
-{
-  "user_profile": {
-    "budget": { "min": number, "max": number },
-    "body_style": string,
-    "model": string,
-    "powertrain": string,
-    "drivetrain": string,
-    "color_ext": string,
-    "color_int": string,
-    "features_must": string[],
-    "features_nice": string[]
-  },
-  "swipe_history": {
-    "favorites": string[],  // vehicle IDs user liked
-    "passes": string[]      // vehicle IDs user passed
-  },
-  "candidate_vehicle": {
-    "id": string,
-    "model": string,
-    "body_style": string,
-    "powertrain": string,
-    "drivetrain": string,
-    "ext_color": string,
-    "int_color": string,
-    "price": number,
-    "key_features": string[]
-  },
-  "all_vehicles": Vehicle[]  // for swipe learning context
-}
+2) Body style:
+   If no preference → x=0.60
+   If exact match → x=1.00
+   Else → x=0.30
 
-Analyze these inputs and output ONLY a single integer between 0 and 100.`;
+3) Powertrain:
+   If no preference → x=0.60
+   If exact match → x=1.00
+   Else → x=0.30
+
+4) Drivetrain:
+   If no preference → x=0.60
+   If exact match → x=1.00
+   Else → x=0.30
+
+5) Exterior color WITH SWIPE LEARNING:
+   Base: in preferred list → 1.00; no preference → 0.60; not preferred → 0.45
+   Count liked vehicles with same ext_color → like_count
+   Count passed vehicles with same ext_color → dislike_count
+   If dislike_count ≥ 3 → x = min(base, 0.25)
+   If like_count ≥ 3 → x = max(base, 0.85)
+
+6) Interior color WITH SWIPE LEARNING:
+   Same logic as exterior color
+
+7) Must-have features:
+   x_must = 1.00 (enforced by hard exclusion)
+
+8) Nice-to-have features:
+   If no nice-to-have → x=0.60
+   Else x = (count_present / total_nice_to_have)
+
+9) Model preference:
+   If no preference → x=0.60
+   If matches user model → x=1.00
+   Else → x=0.50
+
+10) Bias: y_bias = 1.00
+
+FEATURE WEIGHTS (relative importance):
+w_bias=0.8, w_price=1.4, w_body_style=1.0, w_powertrain=1.0, w_drivetrain=0.6,
+w_color_ext=0.4, w_color_int=0.2, w_must_have=1.6, w_nice_to_have=0.6, w_model=0.8
+
+SCORING FORMULA:
+1. Transform each x_i to y_i = 2*x_i - 1
+2. S = Σ(w_i * y_i) over all features + w_bias*y_bias
+3. p = 1/(1 + exp(-S))  [sigmoid]
+4. grade = round(100 * p)
+5. Clamp to [0, 100]
+
+OUTPUT RULE: Return ONLY the integer (0–100). Nothing else.`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -75,42 +88,71 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Build the user prompt with all context
-    const userPrompt = `Calculate match grade for:
+    // Analyze swipe history for color learning
+    const likedColors = { ext: new Map<string, number>(), int: new Map<string, number>() };
+    const dislikedColors = { ext: new Map<string, number>(), int: new Map<string, number>() };
+    
+    swipeHistory.favorites?.forEach((id: string) => {
+      const v = allVehicles?.find((av: any) => av.id === id);
+      if (v) {
+        likedColors.ext.set(v.ext_color, (likedColors.ext.get(v.ext_color) || 0) + 1);
+        likedColors.int.set(v.int_color, (likedColors.int.get(v.int_color) || 0) + 1);
+      }
+    });
+    
+    swipeHistory.passes?.forEach((id: string) => {
+      const v = allVehicles?.find((av: any) => av.id === id);
+      if (v) {
+        dislikedColors.ext.set(v.ext_color, (dislikedColors.ext.get(v.ext_color) || 0) + 1);
+        dislikedColors.int.set(v.int_color, (dislikedColors.int.get(v.int_color) || 0) + 1);
+      }
+    });
 
-USER PREFERENCES:
-- Budget: $${preferences.budget_total.min || 0} - $${preferences.budget_total.max || 999999}
-- Body Style: ${preferences.body_style || "any"}
-- Model: ${preferences.model || "any"}
-- Powertrain: ${preferences.powertrain || "any"}
-- Drivetrain: ${preferences.drivetrain || "any"}
-- Exterior Color: ${preferences.color_ext || "any"}
-- Interior Color: ${preferences.color_int || "any"}
-- Must-Have Features: ${preferences.features_must?.join(", ") || "none"}
-- Nice-to-Have Features: ${preferences.features_nice?.join(", ") || "none"}
+    // Build comprehensive user prompt
+    const userPrompt = `ANALYZE THIS VEHICLE:
 
-CANDIDATE VEHICLE:
-- ID: ${vehicle.id}
-- Model: ${vehicle.model} ${vehicle.trim}
-- Body Style: ${vehicle.body_style}
-- Powertrain: ${vehicle.powertrain}
-- Drivetrain: ${vehicle.drivetrain}
-- Price: $${vehicle.price}
-- Exterior Color: ${vehicle.ext_color}
-- Interior Color: ${vehicle.int_color}
-- Features: ${vehicle.key_features?.join(", ") || "none"}
+USER_PROFILE:
+  budget: { min: ${preferences.budget_total.min || 0}, max: ${preferences.budget_total.max || 999999} }
+  body_style: "${preferences.body_style || ""}"
+  model: "${preferences.model || ""}"
+  powertrain: "${preferences.powertrain || ""}"
+  drivetrain: "${preferences.drivetrain || ""}"
+  color_ext_pref: "${preferences.color_ext || ""}"
+  color_int_pref: "${preferences.color_int || ""}"
+  must_have_features: [${preferences.features_must?.map((f: any) => `"${f}"`).join(", ") || ""}]
+  nice_to_have_features: [${preferences.features_nice?.map((f: any) => `"${f}"`).join(", ") || ""}]
 
-SWIPE HISTORY:
-- Favorites (${swipeHistory.favorites?.length || 0}): ${swipeHistory.favorites?.map((id: string) => {
+CANDIDATE_VEHICLE:
+  id: "${vehicle.id}"
+  model: "${vehicle.model}"
+  trim: "${vehicle.trim}"
+  body_style: "${vehicle.body_style}"
+  powertrain: "${vehicle.powertrain}"
+  drivetrain: "${vehicle.drivetrain}"
+  price: ${vehicle.price}
+  ext_color: "${vehicle.ext_color}"
+  int_color: "${vehicle.int_color}"
+  features: [${vehicle.key_features?.map((f: any) => `"${f}"`).join(", ") || ""}]
+
+SWIPE_LEARNING:
+  total_favorites: ${swipeHistory.favorites?.length || 0}
+  total_passes: ${swipeHistory.passes?.length || 0}
+  ext_color_liked_count: ${likedColors.ext.get(vehicle.ext_color) || 0}
+  ext_color_disliked_count: ${dislikedColors.ext.get(vehicle.ext_color) || 0}
+  int_color_liked_count: ${likedColors.int.get(vehicle.int_color) || 0}
+  int_color_disliked_count: ${dislikedColors.int.get(vehicle.int_color) || 0}
+  
+LIKED_VEHICLES_SUMMARY: ${swipeHistory.favorites?.slice(0, 5).map((id: string) => {
   const v = allVehicles?.find((av: any) => av.id === id);
-  return v ? `${v.model}(${v.body_style},${v.powertrain})` : id;
-}).join(", ") || "none"}
-- Passes (${swipeHistory.passes?.length || 0}): ${swipeHistory.passes?.map((id: string) => {
-  const v = allVehicles?.find((av: any) => av.id === id);
-  return v ? `${v.model}(${v.body_style},${v.powertrain})` : id;
+  return v ? `${v.model}(${v.body_style},${v.powertrain},${v.ext_color})` : id;
 }).join(", ") || "none"}
 
-Output only the integer match grade (0-100):`;
+PASSED_VEHICLES_SUMMARY: ${swipeHistory.passes?.slice(0, 5).map((id: string) => {
+  const v = allVehicles?.find((av: any) => av.id === id);
+  return v ? `${v.model}(${v.body_style},${v.powertrain},${v.ext_color})` : id;
+}).join(", ") || "none"}
+
+Calculate match grade (0-100):`;
 
     console.log("Calling Lovable AI for match scoring...");
 
