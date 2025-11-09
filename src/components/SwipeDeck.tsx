@@ -99,9 +99,9 @@ export const SwipeDeck = ({ vehicles, onSwipe, onUndo, canUndo }: SwipeDeckProps
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div
-        className="relative h-[600px] w-full max-w-md cursor-grab active:cursor-grabbing"
+        className="relative mx-auto h-[700px] w-full max-w-xl cursor-grab active:cursor-grabbing"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
