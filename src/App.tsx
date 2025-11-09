@@ -32,16 +32,22 @@ const App = () => {
   });
   const [rankedVehicles, setRankedVehicles] = useState<Vehicle[]>([]);
 
-  // Recalculate match scores when preferences change using AI
+  // Recalculate match scores when preferences or swipes change using AI
   useEffect(() => {
     const scoreVehicles = async () => {
       if (!preferences) return;
+      
+      // Build swipe history with full vehicle data
+      const swipeHistory = {
+        favorites: mockVehicles.filter(v => session.favorites.includes(v.id)),
+        passes: mockVehicles.filter(v => session.passes.includes(v.id))
+      };
       
       const scoredVehicles = await Promise.all(
         mockVehicles.map(async (vehicle) => {
           try {
             const { data, error } = await supabase.functions.invoke('match-scorer', {
-              body: { vehicle, preferences }
+              body: { vehicle, preferences, swipeHistory }
             });
             
             if (error) {
@@ -73,7 +79,7 @@ const App = () => {
     };
     
     scoreVehicles();
-  }, [preferences]);
+  }, [preferences, session.favorites, session.passes]);
 
   const favoriteVehicles = rankedVehicles.filter((v) =>
     session.favorites.includes(v.id)

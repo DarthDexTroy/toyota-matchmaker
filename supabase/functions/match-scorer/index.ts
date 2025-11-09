@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { vehicle, preferences } = await req.json();
+    const { vehicle, preferences, swipeHistory } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -20,29 +20,88 @@ serve(async (req) => {
 
     console.log("Scoring vehicle:", vehicle.title);
 
-    const systemPrompt = `You are an expert automotive matchmaking AI for Toyota vehicles. Your job is to analyze how well a specific vehicle matches a customer's preferences and return a match score from 0-100.
+    // Build learning context from swipe history
+    let learningContext = "";
+    if (swipeHistory && swipeHistory.favorites && swipeHistory.passes) {
+      const favoritesContext = swipeHistory.favorites.length > 0 
+        ? `\n\nVehicles User LIKED (swiped right):\n${swipeHistory.favorites.map((v: any) => 
+            `- ${v.title}: $${v.price.toLocaleString()}, ${v.body_style}, ${v.powertrain}, ${v.drivetrain}, ${v.ext_color}`
+          ).join('\n')}`
+        : "";
+      
+      const passesContext = swipeHistory.passes.length > 0
+        ? `\n\nVehicles User DISLIKED (swiped left):\n${swipeHistory.passes.map((v: any) => 
+            `- ${v.title}: $${v.price.toLocaleString()}, ${v.body_style}, ${v.powertrain}, ${v.drivetrain}, ${v.ext_color}`
+          ).join('\n')}`
+        : "";
+      
+      learningContext = favoritesContext + passesContext;
+    }
 
-Scoring Guidelines:
-- Body Style Match (20 points max): Perfect match = 20, no preference = 20, mismatch = 0
-- Price Range Match (25 points max): Within budget = 25, slightly over = 15-20, way under = 15, way over = 0-10
-- Powertrain Match (20 points max): Exact match = 20, no preference = 20, compatible = 10, mismatch = 0
-- Drivetrain Match (10 points max): Exact match = 10, no preference = 10, mismatch = 0
-- Color Match (15 points max): Exact/similar = 15, no preference = 15, different family = 0-8
-- Model/Trim Bonus (10 points max): Matches specific model/trim preference = 10
+    const systemPrompt = `You are an expert automotive matchmaking AI for Toyota vehicles. You must use a strict scoring algorithm and learn from user behavior.
 
-Consider:
-- A customer with no preferences should get high scores (80-100) on suitable vehicles
-- Being significantly over budget is worse than being under budget
-- Similar colors in the same family (e.g., red/crimson, silver/gray) should get partial credit
-- Hybrid/EV preferences strongly indicate eco-consciousness
-- AWD/4WD preferences often indicate need for capability
+CRITICAL SCORING ALGORITHM - Follow this exactly:
 
-Return ONLY a JSON object with this exact format:
-{"score": 85, "reasoning": "Brief 1-2 sentence explanation of the score"}
+1. BODY STYLE (0-20 points):
+   - Exact match to preference: 20 points
+   - No preference stated: 15 points (neutral)
+   - Different body style: 0 points
+   
+2. PRICE RANGE (0-25 points):
+   - Within budget (min to max): 25 points
+   - 0-10% over max: 20 points
+   - 10-20% over max: 12 points
+   - 20-30% over max: 5 points
+   - 30%+ over max: 0 points
+   - Under minimum (20%+ below): 10 points (may lack features)
+   - No budget set: 20 points
 
-Score must be an integer 0-100.`;
+3. POWERTRAIN (0-20 points):
+   - Exact match: 20 points
+   - Compatible (hybrid when EV wanted, or vice versa): 12 points
+   - No preference: 15 points
+   - Mismatch (gas when hybrid/EV wanted): 5 points
 
-    const userPrompt = `Vehicle:
+4. DRIVETRAIN (0-10 points):
+   - Exact match: 10 points
+   - Compatible upgrade (AWD when FWD wanted): 8 points
+   - No preference: 8 points
+   - Downgrade (FWD when AWD wanted): 3 points
+
+5. EXTERIOR COLOR (0-15 points):
+   - Exact match: 15 points
+   - Same color family: 10 points (red/crimson, silver/gray/white, blue/navy)
+   - No preference: 12 points
+   - Different color family: 3 points
+
+6. FEATURE MATCH (0-10 points):
+   - Has all must-have features: +5 points
+   - Has 50%+ nice-to-have features: +3 points
+   - Has 25-49% nice-to-have: +2 points
+   - Missing must-haves: 0 points total
+
+ADAPTIVE LEARNING RULES:
+- If user liked similar vehicles, ADD 5-15 bonus points
+- If user passed similar vehicles, SUBTRACT 10-20 points
+- Learn patterns: price sensitivity, body style preferences, powertrain importance
+- If user consistently likes vehicles over budget, be less strict on price
+- If user passes vehicles in stated preference, that preference may not be important
+- Score distribution should range from 30-95, with most vehicles between 50-80
+- Only exceptional matches score above 85
+
+STRICT REQUIREMENTS:
+- You MUST calculate each category separately
+- You MUST show your math in reasoning
+- Scores should vary significantly (20-95 range)
+- DO NOT give everything 85-95 scores
+- BE CRITICAL - most vehicles should score 55-75
+- Only perfect matches deserve 90+
+
+Return ONLY valid JSON:
+{"score": 72, "reasoning": "Brief calculation: Body(15) + Price(20) + Power(12) + Drive(8) + Color(10) + Features(2) + Learning(5) = 72"}`;
+
+
+    const userPrompt = `VEHICLE TO SCORE:
 - Model: ${vehicle.model}
 - Title: ${vehicle.title}
 - Price: $${vehicle.price.toLocaleString()}
@@ -53,7 +112,7 @@ Score must be an integer 0-100.`;
 - Interior Color: ${vehicle.int_color}
 - Key Features: ${vehicle.key_features.join(", ")}
 
-User Preferences:
+USER STATED PREFERENCES:
 - Body Style: ${preferences.body_style || "No preference"}
 - Model: ${preferences.model || "No preference"}
 - Trim: ${preferences.trim || "No preference"}
@@ -63,8 +122,9 @@ User Preferences:
 - Budget Range: $${preferences.budget_total.min?.toLocaleString() || "0"} - $${preferences.budget_total.max?.toLocaleString() || "unlimited"}
 - Must-Have Features: ${preferences.features_must.length > 0 ? preferences.features_must.join(", ") : "None"}
 - Nice-to-Have Features: ${preferences.features_nice.length > 0 ? preferences.features_nice.join(", ") : "None"}
+${learningContext}
 
-Calculate the match score and provide reasoning.`;
+Calculate the match score using the algorithm. Show your category scores in reasoning.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
