@@ -29,25 +29,33 @@ export const Favorites = ({ vehicles, onRemove }: FavoritesProps) => {
       <AppHeader title="My Favorites" />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+        <header className="relative mx-auto max-w-5xl mb-8">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={() => navigate("/")} 
-            className="gap-2 text-muted-foreground hover:text-foreground hover:bg-accent"
+            className="gap-2 text-white/70 hover:text-white hover:bg-white/10 mb-6"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Swiping
           </Button>
-          <h1 className="mt-4 mb-2 text-4xl font-black leading-tight tracking-tight">
-            <span className="bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent drop-shadow-lg">
+          
+          <div className="inline-block rounded-2xl bg-white/5 px-5 py-3 backdrop-blur-md ring-1 ring-white/10">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
               My Favorites
             </span>
+          </div>
+
+          <h1 className="mt-4 text-balance text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.04] tracking-tight">
+            <span className="bg-gradient-to-b from-white via-white to-[#d9d9d9] bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(0,0,0,.35)]">
+              Your Saved Vehicles
+            </span>
           </h1>
-          <p className="text-muted-foreground">
-            {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""} saved
+
+          <p className="mt-3 max-w-2xl text-base sm:text-lg text-white/70">
+            {vehicles.length} vehicle{vehicles.length !== 1 ? "s" : ""} saved • Compare and view details
           </p>
-        </div>
+        </header>
 
         {vehicles.length === 0 ? (
           <div className="flex h-[400px] items-center justify-center">
