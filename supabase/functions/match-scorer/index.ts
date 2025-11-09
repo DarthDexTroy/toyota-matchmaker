@@ -166,7 +166,12 @@ Calculate the match score using the algorithm. Show your category scores in reas
     const data = await response.json();
     console.log("AI response:", data);
     
-    const assistantMessage = data.choices[0].message.content;
+    let assistantMessage = data.choices[0].message.content;
+    
+    // Strip markdown code blocks if present
+    assistantMessage = assistantMessage.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    
+    console.log("Cleaned AI message:", assistantMessage);
     
     // Parse the JSON response from the AI
     const result = JSON.parse(assistantMessage);
