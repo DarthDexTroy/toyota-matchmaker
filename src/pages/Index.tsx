@@ -135,20 +135,12 @@ const Index = ({ preferences, setPreferences, session, setSession, rankedVehicle
           </header>
 
           <div className="flex justify-center min-h-[600px] items-center">
-            {isRescoring ? (
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#EB0A1E] mx-auto mb-6"></div>
-                <h2 className="text-2xl font-bold text-white mb-2">AI Analyzing Your Matches</h2>
-                <p className="text-white/60">Learning from your preferences...</p>
-              </div>
-            ) : (
-              <SwipeDeck
-                vehicles={remainingVehicles}
-                onSwipe={handleSwipe}
-                onUndo={handleUndo}
-                canUndo={history.length > 0}
-              />
-            )}
+            <SwipeDeck
+              vehicles={remainingVehicles}
+              onSwipe={handleSwipe}
+              onUndo={handleUndo}
+              canUndo={history.length > 0}
+            />
           </div>
 
           {/* Stats */}
